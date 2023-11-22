@@ -124,6 +124,7 @@ import { ref, reactive, inject, watch, computed, onMounted } from 'vue'
 import CusPanel from '@smartweighing/components/CusPanel.vue'
 import dayjs from 'dayjs'
 import PieEchart from '@/components/echarts/PieEchart.vue'
+import api from '@smartweighing/api'
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
 const $elIcons = inject('$elIcons')
@@ -280,7 +281,7 @@ const getData = async type => {
         dimensionType: dimensionType.value,
         sortType: sortType.value,
     }
-    const res = await $api.smartWeighing.commonServerStatisticsFoodSalesStatisticsSelectFoodStatisticsInfo(params)
+    const res = await api.common.post('/statistics/foodSalesStatistics/selectFoodStatisticsInfo', params)
 
     if (res.success) {
         if (!type) {
@@ -389,7 +390,7 @@ const disabledDate = time => {
 const organizationId = ref($storage.get('userInfo')?.organizationId)
 const cateOptionsOrg = ref([])
 const getOrganizationList = async () => {
-    const res = await $api.smartWeighing.commonServerSysOrganizationGetCanteenList({
+    const res = await api.common.post('/sys/organization/getCanteenList', {
         orgId: $storage.get('userInfo')?.organizationId,
     })
     cateOptionsOrg.value = res.data.map(v => {

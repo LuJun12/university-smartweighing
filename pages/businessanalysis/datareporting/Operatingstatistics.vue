@@ -117,6 +117,7 @@ import * as echarts from 'echarts'
 import BarEchart from '@/components/echarts/BarLineEchart.vue'
 import RingEchart from '@/components/echarts/RingEchart.vue'
 import dayjs from 'dayjs'
+import api from '@smartweighing/api'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -142,7 +143,7 @@ const disabledDate = time => {
     return time.getTime() > Date.now() || time.getTime() < sixMonth
 }
 const getOrganizationList = async () => {
-    const res = await $api.smartWeighing.commonServerSysOrganizationGetCanteenList({
+    const res = await api.common.post('/sys/organization/getCanteenList', {
         orgId: $storage.get('userInfo')?.organizationId,
     })
     cateOptions.value = res.data.map(v => {
@@ -387,7 +388,7 @@ const getTotalByMonth = async () => {
         organizationId: organizationId.value,
     }
 
-    const res = await $api.smartWeighing.commonServerStatisticsOperatingStatisticsSelectOperatingStatisticsInfo(params)
+    const res = await api.common.post('/statistics/operatingStatistics/selectOperatingStatisticsInfo',params)
     if (res.success) {
         orderStatistInfo.value = res.data
         orderStatistiRight.value[0].value = res.data.totalPrice || 0
