@@ -4,5 +4,8 @@
     "author": "hzyq",
     "projectType": "BM",
     "supportYqIcon": true,
-    "supportCardPanel": true
+    "supportCardPanel": true,
+    "alias": {
+        "@smartweighing": "/views/university-smartweighing"
+    }
 }
