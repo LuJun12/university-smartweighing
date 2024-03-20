@@ -281,7 +281,7 @@ const getData = async type => {
         dimensionType: dimensionType.value,
         sortType: sortType.value,
     }
-    const res = await api.common.post('/statistics/foodSalesStatistics/selectFoodStatisticsInfo', params)
+    const res = await api.smartWeighing.post('/statistics/foodSalesStatistics/selectFoodStatisticsInfo', params)
 
     if (res.success) {
         if (!type) {
@@ -390,7 +390,7 @@ const disabledDate = time => {
 const organizationId = ref($storage.get('userInfo')?.organizationId)
 const cateOptionsOrg = ref([])
 const getOrganizationList = async () => {
-    const res = await api.common.post('/sys/organization/getCanteenList', {
+    const res = await api.smartWeighing.post('/sys/organization/getCanteenList', {
         orgId: $storage.get('userInfo')?.organizationId,
     })
     cateOptionsOrg.value = res.data.map(v => {

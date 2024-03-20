@@ -126,7 +126,7 @@ const getmealSmartOrderorderRefundDetail = async () => {
         orderId: detailId.value,
         strategyName: 'pcRefundInfoStrategy',
     }
-    const res = await api.common.post('/order/mealSmartOrder/orderRefundDetail', params)
+    const res = await api.smartWeighing.post('/order/mealSmartOrder/orderRefundDetail', params)
     if (res.success) {
         detailInfo.value = res.data
         tableNew.value = dialogRow.value.map(v => {
@@ -174,7 +174,7 @@ const doSubmitFun = async () => {
                     }
                 }),
             }
-            const res = await api.common.post('/order/mealSmartOrder/confirmRefunds', data)
+            const res = await api.smartWeighing.post('/order/mealSmartOrder/confirmRefunds', data)
             if (res.success) {
                 submitloading.value = false
                 centerDialogVisible.value = false

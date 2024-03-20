@@ -329,7 +329,7 @@ const kuikuanhandle = () => {
 
 const handlePay = async () => {
     if (await $message.confirm('请确认食客已取完餐，若立即结算，结算后食客将无法取餐', '结算确认')) {
-        const res = await api.common.post('/order/mealSmartOrder/handBackstageSettlement', {
+        const res = await api.smartWeighing.post('/order/mealSmartOrder/handBackstageSettlement', {
             id: detailInfo.modifyId,
         })
         if (res.success) {
@@ -350,7 +350,7 @@ const detailInfo = reactive({
     loading: false,
     getData: async () => {
         detailInfo.loading = true
-        const res = await api.common.post('/order/mealSmartOrder/detail/canteen', {
+        const res = await api.smartWeighing.post('/order/mealSmartOrder/detail/canteen', {
             id: detailInfo.modifyId,
             organizationId: $storage.get('userInfo')?.organizationId,
         })

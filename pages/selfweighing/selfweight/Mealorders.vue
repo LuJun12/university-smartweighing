@@ -341,7 +341,7 @@ const mainTable = reactive({
             mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.common.post('/order/mealSmartOrder/list/canteen', {
+        const res = await api.smartWeighing.post('/order/mealSmartOrder/list/canteen', {
             ...searchConditionForm.model,
             pageNo: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,

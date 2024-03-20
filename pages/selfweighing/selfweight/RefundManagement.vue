@@ -353,7 +353,7 @@ const mainTable = reactive({
             mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.common.post('/order/mealSmartOrder/orderRefundList', {
+        const res = await api.smartWeighing.post('/order/mealSmartOrder/orderRefundList', {
             ...searchConditionForm.model,
             pageNo: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
@@ -373,7 +373,7 @@ const freshData = () => {
 }
 const refundAgin = async row => {
     mainTable.config.loading = true
-    const res = await api.common.post('/order/mealSmartOrder/confirmRefunds', {
+    const res = await api.smartWeighing.post('/order/mealSmartOrder/confirmRefunds', {
         strategyName: 'pcOneCardOnceAgainRefundStrategy',
         orderId: row.orderId,
         refundOrderId: row.refundOrderId,

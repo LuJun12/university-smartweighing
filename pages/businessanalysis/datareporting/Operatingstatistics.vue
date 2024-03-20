@@ -143,7 +143,7 @@ const disabledDate = time => {
     return time.getTime() > Date.now() || time.getTime() < sixMonth
 }
 const getOrganizationList = async () => {
-    const res = await api.common.post('/sys/organization/getCanteenList', {
+    const res = await api.smartWeighing.post('/sys/organization/getCanteenList', {
         orgId: $storage.get('userInfo')?.organizationId,
     })
     cateOptions.value = res.data.map(v => {
@@ -388,7 +388,7 @@ const getTotalByMonth = async () => {
         organizationId: organizationId.value,
     }
 
-    const res = await api.common.post('/statistics/operatingStatistics/selectOperatingStatisticsInfo',params)
+    const res = await api.smartWeighing.post('/statistics/operatingStatistics/selectOperatingStatisticsInfo',params)
     if (res.success) {
         orderStatistInfo.value = res.data
         orderStatistiRight.value[0].value = res.data.totalPrice || 0
