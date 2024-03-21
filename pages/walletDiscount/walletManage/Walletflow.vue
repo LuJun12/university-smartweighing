@@ -11,7 +11,13 @@
         </div>
 
         <div class="yq-flex-1 yq-p-16 yq-rounded-4 yq-bg-white">
-            <ElPlusTable :table-toolbar="mainTable.toolbar" :table-data="mainTable.data" :table-config="mainTable.config" :table-columns="mainTable.columns" :table-pagination="mainTable.pagination" />
+            <ElPlusTable
+                :table-toolbar="mainTable.toolbar"
+                :table-data="mainTable.data"
+                :table-config="mainTable.config"
+                :table-columns="mainTable.columns"
+                :table-pagination="mainTable.pagination"
+            />
         </div>
     </div>
 </template>
@@ -19,6 +25,7 @@
 <script setup lang="jsx">
 /* --------------------- 引用 --------------------- */
 import { ref, reactive, inject, onMounted } from 'vue'
+import ElPlusFormDialog from '@/components/ElPlusFormDialog.vue'
 import api from '@smartweighing/api'
 
 /* ----------------- 实例化和注入 ------------------ */
@@ -26,14 +33,22 @@ const $api = inject('$api')
 const $elIcons = inject('$elIcons')
 const $message = inject('$message')
 const $store = inject('$store')
+const $fakeRouter = inject('$fakeRouter')
 const $storage = inject('$storage')
+const $routeState = inject('$routeState')
 
 /* ------------------- 查询条件 -------------------- */
 const searchConditionFormRef = ref()
 const searchConditionForm = reactive({
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     model: {
-        mealTimePeriod: '',
+        userName: '',
+        organizationId: '',
+        userAccount: '',
+        flowType: '',
+        flowEvent: '',
+        id: '',
+        walletType: '',
     },
     // 表单配置
     config: {
@@ -43,6 +58,7 @@ const searchConditionForm = reactive({
         nowrap: false,
         // 标签后缀
         labelSuffix: '：',
+        // labelWidth: '80',
         // 为指定类型的表单项设置默认属性
         defaultProps: {
             'el-input': {
@@ -52,15 +68,26 @@ const searchConditionForm = reactive({
             },
         },
         // 为指定类型的表单项设置默认事件
-        defaultEvents: {
-            'el-input': { change: () => mainTable.getData(1) },
-        },
+        defaultEvents: {},
+        empty: 'custom',
     },
     // 表单项配置
     items: [
         {
-            label: '餐次',
-            prop: 'mealTimePeriod',
+            label: '明细编号',
+            prop: 'id',
+        },
+        {
+            label: '姓名',
+            prop: 'userName',
+        },
+        {
+            label: '账号',
+            prop: 'userAccount',
+        },
+        {
+            label: '钱包类型',
+            prop: 'walletType',
             type: 'el-select',
             options: [
                 {
@@ -68,43 +95,64 @@ const searchConditionForm = reactive({
                     value: '',
                 },
                 {
-                    label: '早餐',
-                    value: '1',
+                    label: '食客钱包',
+                    value: 1,
                 },
                 {
-                    label: '午餐',
-                    value: '2',
-                },
-                {
-                    label: '晚餐',
-                    value: '3',
-                },
-                {
-                    label: '夜宵',
-                    value: '4',
+                    label: '补贴钱包',
+                    value: 2,
                 },
             ],
         },
         {
-            label: '菜品名称',
-            prop: 'dishName',
+            label: '类型',
+            prop: 'flowType',
+            type: 'el-select',
+            options: [
+                {
+                    label: '全部',
+                    value: '',
+                },
+                {
+                    label: '转入',
+                    value: 1,
+                },
+                {
+                    label: '转出',
+                    value: 2,
+                },
+            ],
         },
         {
-            label: '设备编码',
-            prop: 'deviceSn',
-        },
-        {
-            label: '设备名称',
-            prop: 'deviceName',
-        },
-        {
-            label: '加菜日期',
-            prop: 'addTime',
-            type: 'el-date-picker',
-            props: {
-                type: 'date',
-                style: 'max-width: 164px; width: auto;',
-            },
+            label: '事项',
+            prop: 'flowEvent',
+            type: 'el-select',
+            options: [
+                {
+                    label: '全部',
+                    value: '',
+                },
+                {
+                    label: '提现',
+                    value: 1,
+                },
+                {
+                    label: '充值',
+                    value: 2,
+                },
+                {
+                    label: '订单支付',
+                    value: 3,
+                },
+                {
+                    label: '调整',
+                    value: 4,
+                },
+                {
+                    label: '退款',
+                    value: 5,
+                },
+            ],
         },
         {
             // 类型为渲染函数
@@ -122,8 +170,8 @@ const searchConditionForm = reactive({
     // 重置
     reset: () => {
         searchConditionFormRef.value.resetFields()
-        mainTable.pagination.pageNo = 1
-        mainTable.pagination.pageSize = 10
+        mainTable.pagination.page = 1
+        mainTable.pagination.pageSize = 20
         mainTable.getData()
     },
 })
@@ -132,7 +180,7 @@ const searchConditionForm = reactive({
 const mainTable = reactive({
     // 工具栏
     toolbar: {
-        title: '日志列表',
+        title: '钱包流水',
         render: scope => {},
     },
     // 表格数据
@@ -161,64 +209,87 @@ const mainTable = reactive({
                 return cellValue
             },
         },
-        empty: 'custom',
     },
     // 字段配置
     columns: [
         {
-            label: '加菜时间',
-            prop: 'addTime',
+            label: '时间',
+            prop: 'createTime',
+            width: 165,
+        },
+        {
+            label: '明细编号',
+            prop: 'id',
+            minWidth: 140,
+        },
+        {
+            label: '相关单据',
+            prop: 'orderNo',
+            minWidth: 140,
+            formatter(...args) {
+                if (!args[2]) return '--'
+                if (args[0].flowEvent == 5) {
+                    return `退款：${args[2]}`
+                } else {
+                    return `订单：${args[2]}`
+                }
+            },
+        },
+        {
+            label: '账号',
+            prop: 'userAccount',
+            minWidth: 100,
+        },
+        {
+            label: '姓名',
+            prop: 'userName',
+            minWidth: 90,
+        },
+        {
+            label: '钱包类型',
+            prop: 'walletType',
+            minWidth: 80,
+            formatter(...args) {
+                return { 1: '食客钱包', 2: '补贴钱包' }[args[2]] ?? args[2] ?? '--'
+            },
+        },
+        {
+            label: '事项',
+            prop: 'flowEventDesc',
+            minWidth: 100,
+        },
+        {
+            label: '类型',
+            prop: 'flowType',
+            minWidth: 80,
+            formatter(...args) {
+                return { 1: '转入', 2: '转出' }[args[2]] ?? args[2] ?? '--'
+            },
+        },
+        {
+            label: '原余额（元）',
+            prop: 'originalBalance',
+            minWidth: 100,
+        },
+        {
+            label: '金额变化（元）',
+            prop: 'changeAmount',
             minWidth: 120,
         },
         {
-            label: '餐次',
-            prop: 'mealTimePeriod',
-            minWidth: 90,
-            formatter: row => {
-                if (row.mealTimePeriod && row.mealTimePeriod == 1) {
-                    return <span>早餐</span>
-                } else if (row.mealTimePeriod && row.mealTimePeriod == 2) {
-                    return <span>午餐</span>
-                } else if (row.mealTimePeriod && row.mealTimePeriod == 3) {
-                    return <span>晚餐</span>
-                } else if (row.mealTimePeriod && row.mealTimePeriod == 4) {
-                    return <span>夜宵</span>
-                } else {
-                    return <span>--</span>
-                }
-            },
+            label: '现余额（元）',
+            prop: 'currentAmount',
+            minWidth: 100,
         },
         {
-            label: '菜品名称',
-            prop: 'itemName',
-            minWidth: 150,
-        },
-        {
-            label: '加菜重量',
-            prop: 'roleList',
+            label: '备注',
+            prop: 'remark',
             minWidth: 200,
-            formatter: row => {
-                if (row.addAmount) {
-                    return <span>{row.addAmount}g</span>
-                } else {
-                    return <span>--</span>
-                }
-            },
-        },
-        {
-            label: '设备名称',
-            prop: 'deviceName',
-            width: 180,
-        },
-        {
-            label: '设备编码',
-            prop: 'deviceSn',
-            width: 180,
         },
     ],
     // 分页器配置
     pagination: {
-        pageNo: 1,
+        page: 1,
         pageSize: 10,
         total: 0,
         sizeChange: val => {
@@ -226,26 +297,20 @@ const mainTable = reactive({
             mainTable.getData(1)
         },
         currentChange: val => {
-            mainTable.pagination.pageNo = val
+            mainTable.pagination.page = val
             mainTable.getData()
         },
     },
     // 获取数据
     getData: async pageNumber => {
         if (pageNumber) {
-            mainTable.pagination.pageNo = pageNumber
+            mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.smartWeighing.post('/mealSmartAddDishLog/list', {
+        const res = await api.smartWeighing.post('/userWalletFlowLog/pageList',{
             ...searchConditionForm.model,
-            pageNo: mainTable.pagination.pageNo,
+            pageNo: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
-            // 组织（接口必须，这里传一个固定值）
-            organizationId: $storage.get('userInfo')?.organizationId,
-            // schoolId: $storage.get('userInfo')?.organizationId,
-            // schoolAreaId: $storage.get('userInfo')?.organizationId,
-            addBeginTime: searchConditionForm.model.addTime ? searchConditionForm.model.addTime + ' 00:00:00' : '',
-            addEndTime: searchConditionForm.model.addTime ? searchConditionForm.model.addTime + ' 23:59:59' : '',
         })
         mainTable.config.loading = false
         if (res.success) {
@@ -257,6 +322,11 @@ const mainTable = reactive({
 
 /* ------------------- 生命周期 -------------------- */
 onMounted(() => {
+    searchConditionForm.model.organizationId = $storage.get('userInfo')?.organizationId
+    const storeData = $routeState.get()?.data
+    if (storeData) {
+        Object.assign(searchConditionForm.model, storeData)
+    }
     // 查询表格数据
     mainTable.getData()
 })

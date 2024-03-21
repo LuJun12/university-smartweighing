@@ -223,6 +223,7 @@ const mainTable = reactive({
                 return cellValue
             },
         },
+        empty: 'custom',
     },
     // 字段配置
     columns: [

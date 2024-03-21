@@ -1,20 +1,21 @@
 export default [
     {
-        path: '/selfweighing',
-        name: 'selfweighing',
-        redirect: '/selfweight/Mealorders',
+        path: '/weighConfig/Index',
+        name: 'weighConfigIndex',
+        component: () => import('./weighConfig/Index.vue'),
         meta: {
-            title: '自助称重',
+            title: '自助称重配置',
+            menuRouteName: 'weighConfigIndex',
         },
     },
 
-    //自助称重
+    //用餐订单
     {
         path: '/selfweight',
         name: 'selfweight',
         redirect: '/selfweight/Mealorders',
         meta: {
-            title: '自助称重',
+            title: '用餐订单',
         },
     },
     {
