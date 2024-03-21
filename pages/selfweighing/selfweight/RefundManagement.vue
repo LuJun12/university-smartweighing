@@ -356,7 +356,7 @@ const mainTable = reactive({
         mainTable.config.loading = true
         const res = await api.smartWeighing.post('/order/mealSmartOrder/orderRefundList', {
             ...searchConditionForm.model,
-            pageNo: mainTable.pagination.page,
+            page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
             // 组织（接口必须，这里传一个固定值）
             organizationId: $storage.get('userInfo')?.organizationId,

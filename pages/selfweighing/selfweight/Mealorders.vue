@@ -344,7 +344,7 @@ const mainTable = reactive({
         mainTable.config.loading = true
         const res = await api.smartWeighing.post('/order/mealSmartOrder/list/canteen', {
             ...searchConditionForm.model,
-            pageNo: mainTable.pagination.page,
+            page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
             orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
             orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',
