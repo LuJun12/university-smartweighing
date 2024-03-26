@@ -33,8 +33,8 @@
         <div ref="partRightRef" class="part-right yq-flex-1 yq-ml-16 yq-hp-100 yq-bg-white yq-flex-column">
             <div class="yq-flex-row-align yq-pl-16 yq-pr-16 yq-pt-16 yq-flex-row-space-between">
                 <div class="left yq-flex-row-align">
-                    最大可容纳就餐人数：2000人
-                    <el-link class="yq-ml-16" :underline="false" type="warning">修改</el-link>
+                    最大可容纳就餐人数：{{maximumDiningCapacity}}人
+                    <el-link class="yq-ml-16" :underline="false" @click="maxiDialog.visible = true" type="warning">修改</el-link>
                 </div>
                 <div class="right">
                     <el-button type="primary" @click="addDig()">添加点位</el-button>
@@ -51,6 +51,7 @@
             </div>
         </div>
         <InspectUnqualifiedDescriptionDialog v-model="confrimDialog.visible" @success="confrimDialog.success" />
+        <maximumDiningCapacityDialog v-model="maxiDialog.visible" @success="mainTable.editMaximumDiningCapacity" />
     </div>
 </template>
 
@@ -59,6 +60,7 @@
 import { ref, reactive, inject, onMounted, watch, nextTick, shallowRef, markRaw } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import InspectUnqualifiedDescriptionDialog from './components/InspectUnqualifiedDescriptionDialog.vue'
+import maximumDiningCapacityDialog from './components/maximumDiningCapacityDialog.vue'
 import api from '@common/api'
 
 /* ----------------- 实例化和注入 ------------------ */
@@ -77,6 +79,11 @@ const confrimDialog = reactive({
         // detailForm.getOrderDetailInfo()
         // $fakeRouter.back()
     },
+})
+
+const maxiDialog = reactive({
+    // 是否显示
+    visible: false,
 })
 const addDig = ()=>{
     confrimDialog.visible = true
@@ -151,6 +158,7 @@ const orgTree = reactive({
                 list,
                 item => {
                     item.id = item.organizationId
+                    item.disabled = (item.companyType== 6||item.enterpriseType== 24400)?false:true
                 },
                 'children'
             )
@@ -162,25 +170,21 @@ const orgTree = reactive({
                 orgTree.checkedId = targetId
                 orgTree.currentNodeKey = targetId
             } else {
-                const checked = findVaildOrg(list)
+                // const checked = findVaildOrg(list)
                 // console.log('checked--->', checked)
-                if (checked) {
-                    await nextTick()
-                    orgTreeRef.value.setCurrentKey(checked.id)
-                    orgTree.checkedId = checked.id
-                    orgTree.currentNodeKey = checked.id
-                    // if (companyTypeEnum[checked.companyType]) {
-                    //     currentComponent.value = componentsPools.value[companyTypeEnum[checked.companyType]]
-                    //     propInfo.companyType = checked.companyType
-                    //     if (checked.companyType === 6) {
-                    //         propInfo.id = checked.parentId
-                    //         propInfo.canteenId = checked.id
-                    //     } else {
-                    //         propInfo.id = checked.id
-                    //         propInfo.canteenId = ''
-                    //     }
-                    // }
-                }
+                // if (checked) {
+                const findTree = $utils.findTree(orgTree.data, item => item.companyType== 6||item.enterpriseType== 24400, 'children')
+                console.log(findTree,'findTree')
+                await nextTick()
+                orgTreeRef.value.setCurrentKey(findTree.id)
+                orgTree.checkedId = findTree.id
+                orgTree.currentNodeKey = findTree.id
+                propInfo.id = findTree.parentId
+                propInfo.canteenId = findTree.id
+                propInfo.companyType = findTree.companyType
+                mainTable.getData()
+                mainTable.getCanteenById()
+                // }
             }
         }
         orgTree.loading = false
@@ -188,34 +192,36 @@ const orgTree = reactive({
     onCheckChange: async (data, node) => {
         // console.log('node--->', node)
         const { companyType } = data
-        if (companyType == 1) {
-            // 集团不可选中
+        if (companyType !== 6) {
+            propInfo.id = data.parentId
+            propInfo.canteenId = data.id
             node.isCurrent = false
             orgTree.currentNodeKey = ''
             await nextTick()
             orgTree.currentNodeKey = orgTree.checkedId
             return
-        } else if (companyType === 6) {
+        } else {
             propInfo.id = data.parentId
             propInfo.canteenId = data.id
-        } else {
-            propInfo.id = data.id
-            propInfo.canteenId = ''
+            propInfo.companyType = data.companyType
+            orgTree.checkedId = data.id
+            mainTable.getData()
+            mainTable.getCanteenById()
+            partRightRef.value.scrollTo(0, 0)
         }
-        propInfo.companyType = data.companyType
-        orgTree.checkedId = data.id
+        // propInfo.companyType = data.companyType
+        // orgTree.checkedId = data.id
 
         // if (companyTypeEnum[companyType]) {
         //     currentComponent.value = componentsPools.value[companyTypeEnum[companyType]]
         // }
-        mainTable.getData()
-        
-        partRightRef.value.scrollTo(0, 0)
     },
 })
 
 
 /* --------------------- 表格 --------------------- */
+const maximumDiningCapacity = ref(0)
+
 const mainTable = reactive({
     // 工具栏
     // toolbar: {
@@ -319,11 +325,11 @@ const mainTable = reactive({
         }
         mainTable.config.loading = true
         const res = await api.common.post('/order/mealSmartOrder/list/canteen', {
-            ...searchConditionForm.model,
+            // ...searchConditionForm.model,
             pageNo: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
-            orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
-            orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',
+            // orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
+            // orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',
             // 组织（接口必须，这里传一个固定值）
             organizationId: $storage.get('userInfo')?.organizationId,
         })
@@ -333,7 +339,25 @@ const mainTable = reactive({
             mainTable.pagination.total = Number(res.data.total)
         }
     },
+    getCanteenById: async ()=>{
+        const res = await api.common.post('/openframe/canteen/sysCanteen/getCanteenById', {
+            id: propInfo.canteenId,
+        })
+        if (res.success) {
+            maximumDiningCapacity.value = res.data.maximumDiningCapacity||0
+        }
+    },
+    editMaximumDiningCapacity: async (maximumDiningCapacity)=>{
+        const res = await api.common.post('/openframe/canteen/sysCanteen/editMaximumDiningCapacity', {
+            id: propInfo.canteenId,
+            maximumDiningCapacity
+        })
+        if (res.success) {
+            mainTable.getCanteenById()
+        }
+    }
 })
+
 
 const getCompanyTypeName = (type) => {
     if (type == 1) {

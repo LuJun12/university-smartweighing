@@ -19,6 +19,7 @@
 /* --------------------- 引用 --------------------- */
 import { ref, reactive, inject, computed, watch } from 'vue'
 import ElPlusFormDialog from '@/components/ElPlusFormDialog.vue'
+import regular from '@/tools/regular'
 import api from '@common/api'
 /* ----------------- 实例化和注入 ------------------ */
 const $regular = inject('$regular')
@@ -96,41 +97,25 @@ const mainFormDialog = reactive({
     }),
     // 对话框配置
     dialogConfig: {
-        title: '添加点位',
+        title: '就餐人数',
         width: '500px',
     },
     // 打开前
     onOpen: async () => {
-        getDepartmentList()
         // 重置表单数据
         mainFormDialog.formModel = Object.assign({}, mainFormDialog.originalFormModel)
-        Object.keys(mainFormDialog.formModel).forEach(key => {
-            mainFormDialog.formModel[key] = props.templateItem?.[key]
-            if (key === 'unqualifiedImg') {
-                mainFormDialog.formModel[key] = props.templateItem[key] ? props.templateItem[key].split(',') : []
-            }
-            elPlusFormDialogRef.value.resetFields()
-        })
-        if(mainFormDialog.formModel.departmentId){
-            getResponsibilityPeopleList(mainFormDialog.formModel.departmentId)
-        }
+        
         // console.log(mainFormDialog.formModel,'mainFormDialog.formModel.unqualifiedImg')
     },
     // 表单初始数据（用于重置表单）
     originalFormModel: {
-        departmentId: '',
-        departmentName: '',
-        responsibilityPeopleId: '',
-        responsibilityPeopleName: '',
-        unqualifiedExplain: '',
-        unqualifiedImg: [],
+        maximumDiningCapacity: '',
     },
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     formModel: {},
     // 表单校验规则
     formRules: {
-        departmentId: [{ required: true, message: '请选择客流摄像头MAC地址', trigger: 'change' }],
-        unqualifiedExplain: [{ required: true, message: '请输入点位名称', trigger: 'blur' }]
+        maximumDiningCapacity: [{ required: true, message: '请输入最大可容纳就餐人数', trigger: 'blur' },{ pattern: regular.number.positiveInteger(), message: '就餐人数应为正整数', trigger: 'blur' }]
     },
     // 表单配置
     formConfig: {
@@ -155,26 +140,18 @@ const mainFormDialog = reactive({
     // 表单项配置
     formItems: [
         {
-            label: '点位名称：',
-            prop: 'unqualifiedExplain',
+            label: '最大可容纳就餐人数：',
+            prop: 'maximumDiningCapacity',
             type: 'render',
             render: () => (
                 <>
                     <el-input
-                        v-model={mainFormDialog.formModel.unqualifiedExplain}
-                        maxlength="30"
-                        placeholder="请输入点位名称"
+                        v-model={mainFormDialog.formModel.maximumDiningCapacity}
+                        maxlength="10"
+                        placeholder="请输入最大可容纳就餐人数"
                     />
                 </>
             ),
-        },
-        {
-            label: '客流摄像头MAC地址：',
-            prop: 'departmentId',
-            type: 'el-select',
-            options: [],
-            events: {
-            },
         },
     ],
     // 获取数据
@@ -189,20 +166,20 @@ const mainFormDialog = reactive({
             //     rejectReason: mainFormDialog.formModel.rejectReason,
             //     operate:'reject'
             // })
-            const unqualifiedData = {
-                checkResultType: 2,
-                departmentId: mainFormDialog.formModel.departmentId,
-                departmentName: mainFormDialog.formModel.departmentName,
-                responsibilityPeopleId: mainFormDialog.formModel.responsibilityPeopleId,
-                responsibilityPeopleName: mainFormDialog.formModel.responsibilityPeopleName,
-                unqualifiedExplain: mainFormDialog.formModel.unqualifiedExplain,
-                unqualifiedImg: mainFormDialog.formModel.unqualifiedImg.join(','),
-            }
+            // const unqualifiedData = {
+            //     checkResultType: 2,
+            //     departmentId: mainFormDialog.formModel.departmentId,
+            //     departmentName: mainFormDialog.formModel.departmentName,
+            //     responsibilityPeopleId: mainFormDialog.formModel.responsibilityPeopleId,
+            //     responsibilityPeopleName: mainFormDialog.formModel.responsibilityPeopleName,
+            //     unqualifiedExplain: mainFormDialog.formModel.unqualifiedExplain,
+            //     unqualifiedImg: mainFormDialog.formModel.unqualifiedImg.join(','),
+            // }
             mainFormDialog.submitting = false
            
             $message.success('操作成功')
             mainFormDialog.visible = false
-            emit('success',unqualifiedData)
+            emit('success',mainFormDialog.formModel.maximumDiningCapacity)
         }
     },
     // 关闭后
