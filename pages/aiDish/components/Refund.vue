@@ -73,13 +73,10 @@
 import { computed, markRaw, onMounted, ref, inject, unref, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-// import { mealSmartOrderorderRefundDetail, mealSmartOrderorderconfirmRefunds } from '@/api/devicemanagement'
-// import { Session } from '@/utils/storage'
 import { verifyNumberIntegerAndFloat } from '@/tools/toolsValidate'
 import api from '@smartweighing/api'
 
 /* ----------------- 实例化和注入 ------------------ */
-const $api = inject('$api')
 const $store = inject('$store')
 const $message = inject('$message')
 const $routeState = inject('$routeState')
@@ -138,7 +135,7 @@ const getmealSmartOrderorderRefundDetail = async () => {
         orderId: detailId.value,
         strategyName: 'pcRefundInfoStrategy',
     }
-    const res = await api.common.post('/order/mealSmartOrder/orderRefundDetail', params)
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/orderRefund/detail', params)
     if (res.success) {
         detailInfo.value = res.data
         tableNew.value = dialogRow.value.map(v => {
@@ -186,7 +183,7 @@ const doSubmitFun = async () => {
                     }
                 }),
             }
-            const res = await api.common.post('/order/mealSmartOrder/confirmRefunds', data)
+            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
             if (res.success) {
                 submitloading.value = false
                 centerDialogVisible.value = false

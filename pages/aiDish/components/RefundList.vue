@@ -137,7 +137,7 @@ const getmealSmartOrderorderRefundDetail = async () => {
         refundOrderId: detailId.value,
         strategyName: 'pcRefundAuditInfoStrategy',
     }
-    const res = await api.common.post('/order/mealSmartOrder/orderRefundDetail', params)
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/orderRefund/detail', params)
     if (res.success) {
         detailInfo.value = res.data
         form.refundAmount = res.data.refundAmount
@@ -165,7 +165,7 @@ const onNosubmit = async () => {
         // refundChannelType:form.refundChannelType,
         refundReasonReply: form.refundReasonReply,
     }
-    const res = await api.common.post('/order/mealSmartOrder/confirmRefunds', data)
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
     if (res.success) {
         submitloading.value = false
         centerDialogVisible.value = false
@@ -207,7 +207,7 @@ const doSubmitFun = async () => {
                 strategyName: 'auditRefund',
                 orderId: orderId.value,
             }
-            const res = await api.common.post('/order/mealSmartOrder/confirmRefunds', data)
+            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
             if (res.success) {
                 submitloading.value = false
                 centerDialogVisible.value = false
