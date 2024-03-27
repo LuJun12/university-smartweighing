@@ -8,7 +8,7 @@
         >
             <div class="title-box">
                 <div class="title-desc">
-                    订单配置
+                    收费模式及订单配置
                 </div>
                 <el-button
                     v-if="isEdit2"
@@ -30,37 +30,90 @@
                     </el-button>
                 </div>
             </div>
-            <div class="title-box-top">
-                1.订单结束规则
-            </div>
-            <div
-                class="title-box1"
-                style="margin: 20px 0"
-            >
-                <span class="mr-10">若用餐人员创建订单后未取餐，则订单在</span>
-                <el-input
-                    v-model="ruleForm.orderAutoCloseTime"
-                    size="small"
-                    class="w-70"
+            <div>
+                <el-radio-group
+                    v-model="ruleForm.payType"
                     :disabled="isEdit2"
-                    @input="onDishVerifyNumberIntegerAndFloat($event, 'orderAutoCloseTime')"
-                />
-                <span class="m-l mr-10">分钟后自动关闭</span>
+                    @change="changePayType"
+                >
+                    <el-radio-button
+                        label="1"
+                    >
+                        称重收费
+                    </el-radio-button>
+                    <el-radio-button
+                        label="2"
+                    >
+                        按订单收费
+                    </el-radio-button>
+                </el-radio-group>
             </div>
-            <div
-                class="title-box1"
-                style="margin: 20px 0"
-            >
-                <span class="mr-10">若用餐人员已取餐，则订单在最后一次取餐后</span>
-                <el-input
-                    v-model="ruleForm.orderAutoSettleTime"
-                    size="small"
-                    class="w-70"
-                    :disabled="isEdit2"
-                    @input="onDishVerifyNumberIntegerAndFloat($event, 'orderAutoSettleTime')"
-                />
-                <span class="m-l mr-10">分钟后自动结算</span>
-            </div>
+            <template v-if="ruleForm.payType === '1'">
+                <div class="title-box-top">
+                    1.订单结束规则
+                </div>
+                <div
+                    class="title-box1"
+                    style="margin: 20px 0"
+                >
+                    <span class="mr-10">若用餐人员创建订单后未取餐，则订单在</span>
+                    <el-input
+                        v-model="ruleForm.orderAutoCloseTime"
+                        size="small"
+                        class="w-70"
+                        :disabled="isEdit2"
+                        @input="onDishVerifyNumberIntegerAndFloat($event, 'orderAutoCloseTime')"
+                    />
+                    <span class="m-l mr-10">分钟后自动关闭</span>
+                </div>
+                <div
+                    class="title-box1"
+                    style="margin: 20px 0"
+                >
+                    <span class="mr-10">若用餐人员已取餐，则订单在最后一次取餐后</span>
+                    <el-input
+                        v-model="ruleForm.orderAutoSettleTime"
+                        size="small"
+                        class="w-70"
+                        :disabled="isEdit2"
+                        @input="onDishVerifyNumberIntegerAndFloat($event, 'orderAutoSettleTime')"
+                    />
+                    <span class="m-l mr-10">分钟后自动结算</span>
+                </div>
+            </template>
+            <template v-else-if="ruleForm.payType === '2'">
+                <div class="title-box-top">
+                    1.订单结束规则
+                </div>
+                <div
+                    class="title-box1"
+                    style="margin: 20px 0"
+                >
+                    <span class="mr-10">当餐次订单不结束，餐次结束后订单自动结算</span>
+                </div>
+
+                <div class="title-box-top">
+                    2.订单统一收费
+                </div>
+                <div
+                    class="title-box1"
+                    style="margin: 20px 0"
+                >
+                    <span class="mr-10">订单统一费用为</span>
+
+                    <el-input
+                        v-model="ruleForm.unifyPay"
+                        size="small"
+                        class="yq-w-100-i"
+                        :disabled="isEdit2"
+                        @input="formartPayMoney($event, 'unifyPay')"
+                    >
+                        <template #suffix>
+                            <span class="color-3">元/单</span>
+                        </template>
+                    </el-input>
+                </div>
+            </template>
         </el-card>
 
         <!-- 设备功能配置 -->
@@ -280,7 +333,7 @@
 <script setup>
 /* --------------------- 引用 --------------------- */
 import { ref, reactive, inject, watch, computed, onMounted } from 'vue'
-import { verifiyNumberInteger, verifiyNumberNumber } from '@/tools/toolsValidate'
+import { verifiyNumberInteger, verifiyNumberNumber, verifyNumberIntegerAndFloat } from '@/tools/toolsValidate'
 import api from '@smartweighing/api'
 
 /* ----------------- 实例化和注入 ------------------ */
@@ -321,6 +374,8 @@ const ruleForm = reactive({
     orderAutoCloseTime: '',
     orderAutoSettleTime: '',
     tpmAdminPassword: '',
+    payType: '1', // 1：称重收费 2：按订单收费
+    unifyPay: '', // 按订单收费统一费用
 })
 
 const rules = reactive({
@@ -401,7 +456,13 @@ const cancelFun = type => {
     }
     getSetting()
 }
-
+const changePayType = (type) => {
+    console.log(type)
+}
+const formartPayMoney = (val, key) => {
+    let num = verifyNumberIntegerAndFloat(val, 9999)
+    ruleForm[key] = num
+}
 const saveFun2 = () => {
     buttonLoadFlag2.value = false
     saveupdataInfo(2, () => {
@@ -737,7 +798,12 @@ onMounted(() => {
 .m-l {
     margin-left: 10px;
 }
-.color-D9001B {
-    color: #d9001b;
+.color {
+    &-D9001B {
+        color: #d9001b;
+    }
+    &-3{
+        color: #333333;
+    }
 }
 </style>
