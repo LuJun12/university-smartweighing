@@ -33,8 +33,8 @@
         <div ref="partRightRef" class="part-right yq-flex-1 yq-ml-16 yq-hp-100 yq-bg-white yq-flex-column">
             <div class="yq-flex-row-align yq-pl-16 yq-pr-16 yq-pt-16 yq-flex-row-space-between">
                 <div class="left yq-flex-row-align">
-                    最大可容纳就餐人数：{{maximumDiningCapacity}}人
-                    <el-link class="yq-ml-16" :underline="false" @click="maxiDialog.visible = true" type="warning">修改</el-link>
+                    最大可容纳就餐人数：{{ maximumDiningCapacity }}人
+                    <el-link class="yq-ml-16" :underline="false" type="warning" @click="maxiDialog.visible = true">修改</el-link>
                 </div>
                 <div class="right">
                     <el-button type="primary" @click="addDig()">添加点位</el-button>
@@ -50,7 +50,13 @@
                 />
             </div>
         </div>
-        <InspectUnqualifiedDescriptionDialog v-model="confrimDialog.visible" @success="confrimDialog.success" />
+        <InspectUnqualifiedDescriptionDialog
+            :id="confrimDialog.id"
+            v-model="confrimDialog.visible"
+            :organization-id="confrimDialog.organizationId"
+            :template-item="confrimDialog.templateItem"
+            @success="confrimDialog.success"
+        />
         <maximumDiningCapacityDialog v-model="maxiDialog.visible" @success="mainTable.editMaximumDiningCapacity" />
     </div>
 </template>
@@ -73,6 +79,9 @@ const $utils = inject('$utils')
 const confrimDialog = reactive({
     // 是否显示
     visible: false,
+    id:'',
+    templateItem:{},
+    organizationId:'',
     // 订单拒绝
     success: () => {
         mainTable.getData()
@@ -86,6 +95,9 @@ const maxiDialog = reactive({
     visible: false,
 })
 const addDig = ()=>{
+    confrimDialog.id = ''
+    confrimDialog.organizationId = propInfo.canteenId
+    confrimDialog.templateItem = {}
     confrimDialog.visible = true
 } 
 
@@ -260,22 +272,22 @@ const mainTable = reactive({
     columns: [
         {
             label: '点位名称',
-            prop: 'orderNo',
+            prop: 'siteName',
             minWidth: 100,
         },
         {
             label: '客流摄像头MAC地址',
-            prop: 'orderStatusName',
+            prop: 'deviceNo',
             minWidth: 160,
         },
         {
             label: '添加时间',
-            prop: 'itemNames',
+            prop: 'createTime',
             minWidth: 150,
         },
         {
             label: '更新时间',
-            prop: 'paymentMethod',
+            prop: 'updateTime',
             width: 180,
         },
        
@@ -290,15 +302,35 @@ const mainTable = reactive({
                     type: 'primary',
                     link: true,
                     click: row => {
-                        
+                        confrimDialog.id = row.id
+                        confrimDialog.organizationId = propInfo.canteenId
+                        confrimDialog.templateItem = {
+                            siteName:row.siteName,
+                            deviceNo:row.deviceNo,
+                        }
+                        confrimDialog.visible = true
                     },
                 },
                 {
                     label: '删除',
                     type: 'primary',
                     link: true,
-                    click: row => {
-                        
+                    click: async row => {
+                        if (await $message.confirm('确认删除该点位？')) {
+                            const res = await api.common.post('/passenger/passengerDeviceSite/deleteById', {
+                                id: row.id,
+                                deviceNo:row.deviceNo,
+                                siteName:row.siteName,
+                            })
+                            if (res.success) {
+                                $message.success('删除成功')
+                                if (mainTable.data.length <= 1) {
+                                    mainTable.getData(1)
+                                } else {
+                                    mainTable.getData()
+                                }
+                            }
+                        }
                     },
                 },
             ],
@@ -324,14 +356,14 @@ const mainTable = reactive({
             mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.common.post('/order/mealSmartOrder/list/canteen', {
+        const res = await api.common.post('/passenger/passengerDeviceSite/getListPage', {
             // ...searchConditionForm.model,
-            pageNo: mainTable.pagination.page,
+            page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
+            organizationId:propInfo.canteenId,
             // orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
             // orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',
             // 组织（接口必须，这里传一个固定值）
-            organizationId: $storage.get('userInfo')?.organizationId,
         })
         mainTable.config.loading = false
         if (res.success) {

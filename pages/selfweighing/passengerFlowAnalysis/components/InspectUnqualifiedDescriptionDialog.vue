@@ -48,6 +48,10 @@ const props = defineProps({
         type: [String,Number],
         default: '',
     },
+    id:{
+        type: [String,Number],
+        default: '', 
+    }
 })
 // watch(
 //     () => props.templateItem,
@@ -69,18 +73,20 @@ const emit = defineEmits(['update:modelValue', 'success'])
 const departmentList = ref([])
 const getDepartmentList = async () => {
     const params = {
-        organization: props.organizationId,
-        type:1,
+        canteenId: props.organizationId,
+        deviceTypeId:'1619876076509438029',
+        page: 1,
+        pageSize: 1000000,
     }
-    const res = await api.common.postF('/openframe/sysDepartmentLabel/selectList', params)
+    const res = await api.common.post('/openframe/device/deviceCompanyRecord/getDeviceDetailList', params)
     if (res.success) {
         departmentList.value = res.data.map(v=>{
             return{
-                label: v.name,
-                value: v.id ,
+                label: v.deviceNo,
+                value: v.deviceNo ,
             }
         })
-        mainFormDialog.formItems[0].options = departmentList.value
+        mainFormDialog.formItems[1].options = departmentList.value
     }
 }
 const mainFormDialogRef = ref()
@@ -102,35 +108,29 @@ const mainFormDialog = reactive({
     // 打开前
     onOpen: async () => {
         getDepartmentList()
+        mainFormDialog.dialogConfig.title = props.id ? '添加点位' : '编辑点位'
         // 重置表单数据
         mainFormDialog.formModel = Object.assign({}, mainFormDialog.originalFormModel)
         Object.keys(mainFormDialog.formModel).forEach(key => {
             mainFormDialog.formModel[key] = props.templateItem?.[key]
-            if (key === 'unqualifiedImg') {
-                mainFormDialog.formModel[key] = props.templateItem[key] ? props.templateItem[key].split(',') : []
-            }
             elPlusFormDialogRef.value.resetFields()
         })
-        if(mainFormDialog.formModel.departmentId){
-            getResponsibilityPeopleList(mainFormDialog.formModel.departmentId)
-        }
+        // if(mainFormDialog.formModel.departmentId){
+        //     getResponsibilityPeopleList(mainFormDialog.formModel.departmentId)
+        // }
         // console.log(mainFormDialog.formModel,'mainFormDialog.formModel.unqualifiedImg')
     },
     // 表单初始数据（用于重置表单）
     originalFormModel: {
-        departmentId: '',
-        departmentName: '',
-        responsibilityPeopleId: '',
-        responsibilityPeopleName: '',
-        unqualifiedExplain: '',
-        unqualifiedImg: [],
+        deviceNo: '',
+        siteName: '',
     },
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     formModel: {},
     // 表单校验规则
     formRules: {
-        departmentId: [{ required: true, message: '请选择客流摄像头MAC地址', trigger: 'change' }],
-        unqualifiedExplain: [{ required: true, message: '请输入点位名称', trigger: 'blur' }]
+        deviceNo: [{ required: true, message: '请选择客流摄像头MAC地址', trigger: 'change' }],
+        siteName: [{ required: true, message: '请输入点位名称', trigger: 'blur' }]
     },
     // 表单配置
     formConfig: {
@@ -156,12 +156,12 @@ const mainFormDialog = reactive({
     formItems: [
         {
             label: '点位名称：',
-            prop: 'unqualifiedExplain',
+            prop: 'siteName',
             type: 'render',
             render: () => (
                 <>
                     <el-input
-                        v-model={mainFormDialog.formModel.unqualifiedExplain}
+                        v-model={mainFormDialog.formModel.siteName}
                         maxlength="30"
                         placeholder="请输入点位名称"
                     />
@@ -170,7 +170,7 @@ const mainFormDialog = reactive({
         },
         {
             label: '客流摄像头MAC地址：',
-            prop: 'departmentId',
+            prop: 'deviceNo',
             type: 'el-select',
             options: [],
             events: {
@@ -184,25 +184,26 @@ const mainFormDialog = reactive({
     submit: async () => {
         if (await elPlusFormDialogRef.value.validate()) {
             mainFormDialog.submitting = true
-            // let res = await api.inventory.post('/psiErp/buyer/pc/approveBuyer', {
-            //     buyerId: props.buyerId,
-            //     rejectReason: mainFormDialog.formModel.rejectReason,
-            //     operate:'reject'
-            // })
-            const unqualifiedData = {
-                checkResultType: 2,
-                departmentId: mainFormDialog.formModel.departmentId,
-                departmentName: mainFormDialog.formModel.departmentName,
-                responsibilityPeopleId: mainFormDialog.formModel.responsibilityPeopleId,
-                responsibilityPeopleName: mainFormDialog.formModel.responsibilityPeopleName,
-                unqualifiedExplain: mainFormDialog.formModel.unqualifiedExplain,
-                unqualifiedImg: mainFormDialog.formModel.unqualifiedImg.join(','),
+            let res
+            if(props.id){
+                res = await api.common.post('/passenger/passengerDeviceSite/updateById', {
+                    'deviceNo': mainFormDialog.formModel.deviceNo,
+                    'id': props.id,
+                    'siteName': mainFormDialog.formModel.siteName
+                })
+            }else{
+                res = await api.common.post('/passenger/passengerDeviceSite/save', {
+                    'deviceNo': mainFormDialog.formModel.deviceNo,
+                    'organizationId': props.organizationId,
+                    'siteName': mainFormDialog.formModel.siteName
+                })
             }
             mainFormDialog.submitting = false
-           
-            $message.success('操作成功')
-            mainFormDialog.visible = false
-            emit('success',unqualifiedData)
+            if (res.success) {
+                $message.success('操作成功')
+                mainFormDialog.visible = false
+                emit('success')
+            }
         }
     },
     // 关闭后

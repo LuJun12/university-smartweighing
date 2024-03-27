@@ -161,20 +161,6 @@ const mainFormDialog = reactive({
     submit: async () => {
         if (await elPlusFormDialogRef.value.validate()) {
             mainFormDialog.submitting = true
-            // let res = await api.inventory.post('/psiErp/buyer/pc/approveBuyer', {
-            //     buyerId: props.buyerId,
-            //     rejectReason: mainFormDialog.formModel.rejectReason,
-            //     operate:'reject'
-            // })
-            // const unqualifiedData = {
-            //     checkResultType: 2,
-            //     departmentId: mainFormDialog.formModel.departmentId,
-            //     departmentName: mainFormDialog.formModel.departmentName,
-            //     responsibilityPeopleId: mainFormDialog.formModel.responsibilityPeopleId,
-            //     responsibilityPeopleName: mainFormDialog.formModel.responsibilityPeopleName,
-            //     unqualifiedExplain: mainFormDialog.formModel.unqualifiedExplain,
-            //     unqualifiedImg: mainFormDialog.formModel.unqualifiedImg.join(','),
-            // }
             mainFormDialog.submitting = false
            
             $message.success('操作成功')
