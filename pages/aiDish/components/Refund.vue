@@ -176,7 +176,7 @@ const doSubmitFun = async () => {
                 refundMethodType: 2,
                 orderId: detailId.value,
                 // userId: $storage.get('userInfo')?.userId,
-                strategyName: 'directRefund',
+                strategyName: 'sysUserWalletRefundStrategy',
                 refundOrderDetailList: dialogRow.value.map(v => {
                     return {
                         refundDishId: v.dishId,

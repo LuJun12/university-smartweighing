@@ -391,7 +391,7 @@ const freshData = () => {
 const refundAgin = async row => {
     mainTable.config.loading = true
     const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', {
-        strategyName: 'pcOneCardOnceAgainRefundStrategy',
+        strategyName: 'pcRefundInfoStrategy',
         orderId: row.orderId,
         refundOrderId: row.refundOrderId,
         // 组织（接口必须，这里传一个固定值）

@@ -523,11 +523,19 @@ const detailInfo = reactive({
             dataListDish.value = res.data.detailList
             dataListLog.value = res.data.dishLogList
             dataListTk.value = res.data.refundInfoList
-            startSteps.value = res.data.orderHistoryList[0]
-            if (res.data.orderHistoryList.length > 1) {
-                endSteps.value = res.data.orderHistoryList[res.data.orderHistoryList.length - 1]
+            startSteps.value = {
+                orderStatusName:'待支付',
+                statusChangeTime:res.data.orderTime,
+                description:'用户下单'
             }
-            activeSteps.value = res.data.orderHistoryList.length
+            if(res.data.orderStatus == 1) {
+                endSteps.value = {
+                    orderStatusName:'已完成',
+                    statusChangeTime:res.data.paymentTime,
+                    description:'支付成功'
+                }
+                activeSteps.value = 2
+            }
         }
     },
 })
