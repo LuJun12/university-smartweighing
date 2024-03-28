@@ -42,7 +42,7 @@
                         </div>
                         <div class="list-all">
                             <div class="left">下单人编号：</div>
-                            <div class="right">{{ detailInfo.info.userNo || '--' }}</div>
+                            <div class="right">{{ detailInfo.info.userId || '--' }}</div>
                         </div>
                         <div class="list-all">
                             <div class="left">下单人：</div>
@@ -60,10 +60,10 @@
                             <div class="left">下单时间：</div>
                             <div class="right">{{ detailInfo.info.orderTime || '--' }}</div>
                         </div>
-                        <div class="list-all">
+                        <!-- <div class="list-all">
                             <div class="left">取餐总耗时：</div>
                             <div class="right">{{ detailInfo.info.timeDifference || '--' }}</div>
-                        </div>
+                        </div>-->
                         <!-- <div class="list-all">
                             <div class="left">下单食堂：</div>
                             <div class="right">{{ detailInfo.info.downOrderPosition || '--' }}</div>
@@ -81,7 +81,7 @@
                             <el-col :span="12">
                                 <div class="list-all">
                                     <div class="left">付款人编号：</div>
-                                    <div class="right">{{ detailInfo.info.orderStatus === 0 || detailInfo.info.orderStatus === 3 ? '--' : detailInfo.info.payUserNo || '--' }}</div>
+                                    <div class="right">{{ detailInfo.info.userId }}</div>
                                 </div>
                             </el-col>
                             <el-col :span="12">
@@ -156,7 +156,7 @@
                         </div>
                         <div class="list-all">
                             <div class="left">下单人编号：</div>
-                            <div class="right">{{ detailInfo.info.userNo || '--' }}</div>
+                            <div class="right">{{ detailInfo.info.userId || '--' }}</div>
                         </div>
                         <div class="list-all">
                             <div class="left">下单人：</div>
@@ -174,10 +174,10 @@
                             <div class="left">下单时间：</div>
                             <div class="right">{{ detailInfo.info.orderTime || '--' }}</div>
                         </div>
-                        <div class="list-all">
+                        <!-- <div class="list-all">
                             <div class="left">取餐总耗时：</div>
                             <div class="right">{{ detailInfo.info.timeDifference || '--' }}</div>
-                        </div>
+                        </div>-->
                         <!-- <div class="list-all">
                             <div class="left">下单食堂：</div>
                             <div class="right">{{ detailInfo.info.downOrderPosition || '--' }}</div>
@@ -192,22 +192,17 @@
                 <el-tab-pane label="菜品信息" name="first">
                     <el-table :data="dataListDish" style="width: 100%; margin-top: 20px" @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column v-for="(item, index) in columnsdish" :prop="item.prop" :key="index" :formatter="item.formatter" :label="item.label" :width="item.width" :type="item.type">
-                            <template #default="scope">
-                                <template v-if="item.formatter">
-                                    <span v-html="item.formatter(scope.row)"></span>
-                                </template>
-                                <span v-else>{{ scope.row[item.prop] || '--' }}</span>
-                            </template>
-                        </el-table-column>
+                        <el-table-column v-for="(item, index) in columnsdish" :prop="item.prop" :key="index" :label="item.label" :width="item.width" :type="item.type"></el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="退款信息" name="third" v-if="detailInfo.info.orderStatus === 1">
                     <el-table :data="dataListTk" style="width: 100%; margin-top: 20px">
-                        <el-table-column v-for="(item, index) in columnstk" :prop="item.prop" :key="index" :formatter="item.formatter" :label="item.label" :width="item.width">
+                        <el-table-column v-for="(item, index) in columnstk" :prop="item.prop" :key="index" :label="item.label" :width="item.width">
                             <template #default="scope">
                                 <template v-if="item.formatter">
-                                    <span v-html="item.formatter(scope.row)"></span>
+                                    <span>{{ scope.row.refundReason || '--' }}</span>
+                                    <br />
+                                    <span>{{ scope.row.refundReasonReply || '--' }}</span>
                                 </template>
                                 <span v-else>{{ scope.row[item.prop] || '--' }}</span>
                             </template>
@@ -277,20 +272,7 @@ const columnstk = ref([
     {
         prop: 'refundReasonReply',
         label: '原因及回复',
-        width: '',
-        formatter: (row, column, cellValue) => {
-            if(row.refundReason || row.refundReasonReply) {
-                return (
-                    <span>
-                        {row.refundReason || '--'}
-                        <br />
-                        {row.refundReasonReply || '--'}
-                    </span>
-                )
-            }else{
-                return '--'
-            }
-        }
+        formatter: true,
     },
     // { prop: 'refundWalletBalance', label: '退回钱包余额(元)', width: '' },
     // { prop: 'refundSubsidyAccount', label: '退回补贴账户(元)', width: '' },
@@ -444,7 +426,7 @@ onMounted(() => {
         .list-all {
             display: flex;
             align-items: center;
-            height: 45px;
+            height: 57px;
             .left {
                 width: 100px;
             }
