@@ -64,10 +64,10 @@
                             <div class="left">取餐总耗时：</div>
                             <div class="right">{{ detailInfo.info.timeDifference || '--' }}</div>
                         </div>
-                        <div class="list-all">
+                        <!-- <div class="list-all">
                             <div class="left">下单食堂：</div>
                             <div class="right">{{ detailInfo.info.downOrderPosition || '--' }}</div>
-                        </div>
+                        </div>-->
                     </el-card>
                 </el-col>
                 <el-col :span="14">
@@ -269,12 +269,28 @@ const columnsdish = ref([
 ])
 const columnstk = ref([
     { prop: 'refundTime', label: '退款时间', width: '' },
+    { prop: 'refundStatusName', label: '状态', width: '' },
+    
     { prop: 'refundMethod', label: '退款方式', width: '' },
     { prop: 'refundItemNames', label: '退款内容', width: '' },
     { prop: 'refundedAmount', label: '退款总额(元)', width: '' },
-    { prop: 'refundWalletBalance', label: '退回钱包余额(元)', width: '' },
-    { prop: 'refundSubsidyAccount', label: '退回补贴账户(元)', width: '' },
-    { prop: 'refundOnlinePayment', label: '退回其他(元)', width: '' },
+    {
+        prop: 'refundReasonReply',
+        label: '原因及回复',
+        width: '',
+        formatter: (row, column, cellValue) => {
+            return (
+                <span>
+                    {row.refundReason || '--'}
+                    <br />
+                    {row.refundReasonReply || '--'}
+                </span>
+            )
+        }
+    },
+    // { prop: 'refundWalletBalance', label: '退回钱包余额(元)', width: '' },
+    // { prop: 'refundSubsidyAccount', label: '退回补贴账户(元)', width: '' },
+    // { prop: 'refundOnlinePayment', label: '退回其他(元)', width: '' },
     { prop: 'operatorName', label: '操作人员', width: '' },
     { prop: 'refundChannel', label: '退款渠道', width: '' },
 ])
