@@ -307,7 +307,7 @@ const mainTable = reactive({
             mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.smartWeighing.post('/userWalletFlowLog/pageList',{
+        const res = await api.common.post('/userWalletFlowLog/pageList',{
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
