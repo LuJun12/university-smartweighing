@@ -279,13 +279,17 @@ const columnstk = ref([
         label: '原因及回复',
         width: '',
         formatter: (row, column, cellValue) => {
-            return (
-                <span>
-                    {row.refundReason || '--'}
-                    <br />
-                    {row.refundReasonReply || '--'}
-                </span>
-            )
+            if(row.refundReason || row.refundReasonReply) {
+                return (
+                    <span>
+                        {row.refundReason || '--'}
+                        <br />
+                        {row.refundReasonReply || '--'}
+                    </span>
+                )
+            }else{
+                return '--'
+            }
         }
     },
     // { prop: 'refundWalletBalance', label: '退回钱包余额(元)', width: '' },
@@ -341,184 +345,7 @@ const freshData = () => {
 }
 
 const detailInfo = reactive({
-    info: {
-        "id": "1765565785415036930",
-        "organizationId": "3",
-        "userId": "1730508188012171265",
-        "walletId": "1730508188045725698",
-        "userNo": "csb1991111",
-        "orderNo": "CZ20240307103100001",
-        "orderStatus": 1,
-        "orderTime": "2024-03-07 10:31:01",
-        "orderType": 1,
-        "refundStatus": null,
-        "totalPrice": 2.33,
-        "amountReceivable": 2.33,
-        "actualPrice": 2.33,
-        "paymentChannelType": null,
-        "paymentChannel": "",
-        "paymentMethodType": 1,
-        "paymentMethod": "钱包余额",
-        "paymentTime": "2024-03-07 10:48:30",
-        "closeTime": "2024-03-07 10:48:30",
-        "deviceId": null,
-        "deviceType": null,
-        "areaId": null,
-        "stallId": "1695369189254275073",
-        "source": "",
-        "thirdPartyOrderId": "",
-        "thirdPartyOrderNo": "",
-        "createUser": null,
-        "createTime": null,
-        "updateUser": null,
-        "updateTime": null,
-        "status": null,
-        "organizationName": "",
-        "itemNames": "",
-        "orderStatusName": "已完成",
-        "orderTypeName": "称重订单",
-        "applyRefund": null,
-        "refundStatusName": "无退款",
-        "userName": "测试BBA",
-        "payUserNo": "csb1991111",
-        "payUserName": "测试BBA",
-        "downOrderPosition": "食堂11-教师档口11",
-        "userType": null,
-        "timeDifference": "5分钟17秒",
-        "orderHistoryList": [
-            {
-                "id": null,
-                "organizationId": null,
-                "orderId": null,
-                "orderNo": "",
-                "orderStatus": null,
-                "refundNo": "",
-                "refundStatus": null,
-                "statusChangeTime": "2024-03-07 10:31:01",
-                "statusType": null,
-                "userId": null,
-                "userName": "",
-                "description": "用户下单",
-                "status": null,
-                "orderStatusName": "待支付",
-                "orderStatusNameSon": ""
-            },
-            {
-                "id": null,
-                "organizationId": null,
-                "orderId": null,
-                "orderNo": "",
-                "orderStatus": null,
-                "refundNo": "",
-                "refundStatus": null,
-                "statusChangeTime": "2024-03-07 10:48:30",
-                "statusType": null,
-                "userId": null,
-                "userName": "",
-                "description": "支付成功",
-                "status": null,
-                "orderStatusName": "已完成",
-                "orderStatusNameSon": ""
-            }
-        ],
-        "detailList": [
-            {
-                "id": "1765565889270198273",
-                "organizationId": "3",
-                "orderId": "1765565785415036930",
-                "dishId": "1688518046348537858",
-                "itemId": "",
-                "itemName": "猪耳朵",
-                "itemUnitPrice": 1.2,
-                "itemWeight": 194,
-                "itemTotalPrice": 2.33,
-                "discountedPrice": 0,
-                "calories": 3414.4,
-                "carbohydrate": 0,
-                "protein": 368.6,
-                "fat": 213.4,
-                "mealDate": "2024-03-07",
-                "mealTimePeriod": 2,
-                "createUser": null,
-                "createTime": "2024-03-07T10:31:25",
-                "updateUser": null,
-                "updateTime": "2024-03-07T10:31:25",
-                "status": 1,
-                "priceCalculationFactor": "100",
-                "priceCalculationFactorName": "100",
-                "uuid": "70543c60-68ab-4df7-a5e1-330dd69e5c58",
-                "actionTime": "2024-03-07 10:36:18",
-                "itemPhoto": ""
-            }
-        ],
-        "dishLogList": [
-            {
-                "id": null,
-                "orderId": null,
-                "organizationId": null,
-                "orderNo": "",
-                "deviceId": null,
-                "deviceSn": "",
-                "deviceName": "一代取餐机",
-                "itemId": null,
-                "dishId": null,
-                "itemName": "猪耳朵",
-                "itemWeightChange": 124,
-                "action": "",
-                "actionTime": "2024-03-07-10:36:18",
-                "orderTotalWeight": 194,
-                "orderDishPrice": 1.49,
-                "orderTotalPrice": 2.33,
-                "createUser": null,
-                "createTime": null,
-                "updateUser": null,
-                "updateTime": null,
-                "status": null
-            },
-            {
-                "id": null,
-                "orderId": null,
-                "organizationId": null,
-                "orderNo": "",
-                "deviceId": null,
-                "deviceSn": "",
-                "deviceName": "一代取餐机",
-                "itemId": null,
-                "dishId": null,
-                "itemName": "猪耳朵",
-                "itemWeightChange": 70,
-                "action": "",
-                "actionTime": "2024-03-07-10:31:25",
-                "orderTotalWeight": 70,
-                "orderDishPrice": 0.84,
-                "orderTotalPrice": 0.84,
-                "createUser": null,
-                "createTime": null,
-                "updateUser": null,
-                "updateTime": null,
-                "status": null
-            }
-        ],
-        "refundedTotalAmount": null,
-        "refundInfoList": [],
-        "dishId": null,
-        "dishCount": 1,
-        "dishTotalWeight": 194,
-        "dishPhotoList": [],
-        "refundedAmount": null,
-        "remainingRefundAmount": null,
-        "refundOrder": null,
-        "offerAmount": null,
-        "msd": null,
-        "amount": 2.33,
-        "allowanceAmount": null,
-        "actualAmount": [],
-        "discountDeduction": null,
-        "orderInfo": null,
-        "paymentInfo": null,
-        "orderRefundRecords": [],
-        "coupons": []
-    },
+    info: {},
     modifyId: '',
     loading: false,
     getData: async () => {
@@ -617,7 +444,7 @@ onMounted(() => {
         .list-all {
             display: flex;
             align-items: center;
-            height: 37.5px;
+            height: 45px;
             .left {
                 width: 100px;
             }
