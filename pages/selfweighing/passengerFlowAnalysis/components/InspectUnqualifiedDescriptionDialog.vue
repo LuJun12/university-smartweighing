@@ -74,7 +74,7 @@ const departmentList = ref([])
 const getDepartmentList = async () => {
     const params = {
         canteenId: props.organizationId,
-        deviceTypeId:'1619876076509438029',
+        deviceTypeId:'1772886240627605511',
         page: 1,
         pageSize: 1000000,
     }
