@@ -11,52 +11,15 @@
         </div>
 
         <div class="yq-flex-1 yq-p-16 yq-rounded-4 yq-bg-white">
-            <ElPlusTable
-                :table-toolbar="mainTable.toolbar"
-                :table-data="mainTable.data"
-                :table-config="mainTable.config"
-                :table-columns="mainTable.columns"
-                :table-pagination="mainTable.pagination"
-            >
+            <ElPlusTable :table-toolbar="mainTable.toolbar" :table-data="mainTable.data" :table-config="mainTable.config" :table-columns="mainTable.columns" :table-pagination="mainTable.pagination">
                 <template #action="{ row }">
                     <template v-if="row.status">
-                        <el-button
-                            link
-                            type="primary"
-                            @click="topUp(row)"
-                        >
-                            充值
-                        </el-button>
-                        <el-button
-                            link
-                            type="primary"
-                            @click="extract(row)"
-                        >
-                            提现
-                        </el-button>
-                        <el-button
-                            link
-                            type="primary"
-                            @click="changeState(row)"
-                        >
-                            调整
-                        </el-button>
-                        <el-button
-                            link
-                            type="primary"
-                            @click="showDetail(row)"
-                        >
-                            查看明细
-                        </el-button>
+                        <el-button link type="primary" @click="topUp(row)">充值</el-button>
+                        <el-button link type="primary" @click="extract(row)">提现</el-button>
+                        <el-button link type="primary" @click="changeState(row)">调整</el-button>
+                        <el-button link type="primary" @click="showDetail(row)">查看明细</el-button>
                     </template>
-                    <el-button
-                        v-else
-                        link
-                        type="primary"
-                        @click="topUp(row)"
-                    >
-                        首充激活
-                    </el-button>
+                    <el-button v-else link type="primary" @click="topUp(row)">首充激活</el-button>
                 </template>
             </ElPlusTable>
         </div>
@@ -74,27 +37,12 @@
         >
             <template #money>
                 <div class="yq-wp-100">
-                    <el-input
-                        v-model="walletDialog.form.money"
-                        :placeholder="`请输入${walletDialog.formItems[1].label}`"
-                        clearable
-                        @input="moneyInput"
-                    >
-                        <template #suffix>
-                            元
-                        </template>
+                    <el-input v-model="walletDialog.form.money" :placeholder="`请输入${walletDialog.formItems[1].label}`" clearable @input="moneyInput">
+                        <template #suffix>元</template>
                     </el-input>
                     <div class="yq-flex yq-justify-between">
                         <span>钱包余额：{{ walletDialog.balance }}元</span>
-                        <el-button
-                            v-if="walletDialog.formType === 2"
-                            link
-                            type="primary"
-                            :disabled="walletDialog.submitting"
-                            @click="allIn"
-                        >
-                            全部提现
-                        </el-button>
+                        <el-button v-if="walletDialog.formType === 2" link type="primary" :disabled="walletDialog.submitting" @click="allIn">全部提现</el-button>
                     </div>
                 </div>
             </template>
@@ -348,7 +296,7 @@ const changeState = async row => {
 
 const showDetail = row => {
     const { page, pageSize } = mainTable.pagination
-    $routeState.go('walletManageWalletflow', { userAccount: row.userAccount }, { model: searchConditionForm.model, pagination: { page, pageSize } })
+    $routeState.go('walletManageWalletflow', { userAccount: row.userAccount,userName:row.userName }, { model: searchConditionForm.model, pagination: { page, pageSize } })
 }
 
 const allIn = () => {
