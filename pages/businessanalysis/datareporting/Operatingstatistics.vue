@@ -5,7 +5,7 @@
                 <div class="search_box" style="margin-top: 24px">
                     <div class="search_item">
                         <span>统计范围：</span>
-                        <el-select v-model="organizationId" clearable style="width: 200px" placeholder="请选择">
+                        <el-select v-model="organizationId" clearable style="width: 200px" placeholder="请选择" @change="clickHandle">
                             <el-option v-for="item in cateOptions" :key="item.value" :label="item.lable" :value="item.value" />
                         </el-select>
                     </div>
@@ -136,22 +136,25 @@ const loading = ref(false)
 
 const cateOptions = ref([])
 
-const organizationId = ref($storage.get('userInfo')?.organizationId)
+const organizationId = ref()
 const datelist = ref([dayjs().add(-29, 'day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')])
 const disabledDate = time => {
     const sixMonth = new Date().setMonth(new Date().getMonth() - 6)
     return time.getTime() > Date.now() || time.getTime() < sixMonth
 }
 const getOrganizationList = async () => {
-    const res = await api.smartWeighing.post('/sys/organization/getCanteenList', {
-        orgId: $storage.get('userInfo')?.organizationId,
+    const res = await api.smartWeighing.post('/statistics/operatingStatistics/selectOperatingCanteenList', {
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
     })
     cateOptions.value = res.data.map(v => {
         return {
-            lable: v.name,
-            value: v.id,
+            lable: v.companyName,
+            value: v.organizationId,
         }
     })
+    if(res.data&&res.data.length){
+        organizationId.value = res.data[0].organizationId
+    }
 }
 
 const clickHandle = () => {
@@ -388,7 +391,7 @@ const getTotalByMonth = async () => {
         organizationId: organizationId.value,
     }
 
-    const res = await api.smartWeighing.post('/statistics/operatingStatistics/selectOperatingStatisticsInfo',params)
+    const res = await api.smartWeighing.post('/statistics/operatingStatistics/selectOperatingStatisticsInfo', params)
     if (res.success) {
         orderStatistInfo.value = res.data
         orderStatistiRight.value[0].value = res.data.totalPrice || 0
@@ -433,9 +436,9 @@ const getTotalByMonth = async () => {
 /* -------------------- 初始化 -------------------- */
 
 /* ------------------- 生命周期 ------------------- */
-onMounted(() => {
-    getOrganizationList()
-    getTotalByMonth()
+onMounted(async() => {
+    await getOrganizationList()
+    await getTotalByMonth()
 })
 </script>
 
