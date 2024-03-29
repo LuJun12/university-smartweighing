@@ -504,14 +504,14 @@ const getSetting = () => {
 }
 const getInfo = async () => {
     const res = await api.smartWeighing.post('/canteen/mealSmartBizConfig/getByCanteenId', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
     })
     if (res.success) {
         const result = res.data
-        hasBreakfast.value = result.ccConfigList.some(item => item.id == 1 && item.disabled == 1) && result.canteenRgcc.indexOf('1') >= 0
-        hasLunch.value = result.ccConfigList.some(item => item.id == 2 && item.disabled == 1) && result.canteenRgcc.indexOf('2') >= 0
-        hasDinner.value = result.ccConfigList.some(item => item.id == 3 && item.disabled == 1) && result.canteenRgcc.indexOf('3') >= 0
-        hasNightsnack.value = result.ccConfigList.some(item => item.id == 4 && item.disabled == 1) && result.canteenRgcc.indexOf('4') >= 0
+        // hasBreakfast.value = result.ccConfigList.some(item => item.id == 1 && item.disabled == 1) && result.canteenRgcc.indexOf('1') >= 0
+        // hasLunch.value = result.ccConfigList.some(item => item.id == 2 && item.disabled == 1) && result.canteenRgcc.indexOf('2') >= 0
+        // hasDinner.value = result.ccConfigList.some(item => item.id == 3 && item.disabled == 1) && result.canteenRgcc.indexOf('3') >= 0
+        // hasNightsnack.value = result.ccConfigList.some(item => item.id == 4 && item.disabled == 1) && result.canteenRgcc.indexOf('4') >= 0
         ruleForm.breakfastTime = [result.breakfastStartTime, result.breakfastEndTime]
         ruleForm.lunchTime = [result.lunchStartTime, result.lunchEndTime]
         ruleForm.dinnerTime = [result.dinnerStartTime, result.dinnerEndTime]
@@ -540,7 +540,7 @@ const saveupdataInfo = async (params, callback) => {
         return false
     }
     const res = await api.smartWeighing.post('/canteen/mealSmartBizConfig/update', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
         fpmAdminPassword: ruleForm.fpmAdminPassword,
         fpmAutoDishRemovalTime: ruleForm.fpmAutoDishRemovalTime,
         orderAutoCloseTime: ruleForm.orderAutoCloseTime,
@@ -559,7 +559,7 @@ const saveupdataInfo = async (params, callback) => {
 
 const updataInfo = async (params, callback) => {
     const res = api.smartWeighing.post('/canteen/mealSmartBizConfig/update', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
         ...params,
     })
     if (res.success) {
