@@ -201,7 +201,7 @@ const searchConditionForm = reactive({
         },
         {
             label: '编号',
-            prop: 'phoneNo',
+            prop: 'idCard',
             type: 'render',
             render() {
                 let placeholder = '请输入' + (cardTypeList.find(item=>item.value == searchConditionForm.model.cardType)?.label || '编号')
@@ -211,7 +211,7 @@ const searchConditionForm = reactive({
                             {{
                                 prepend(){
                                     return (
-                                        <el-select class='yq-w-100' v-model={searchConditionForm.model.cardType}>
+                                        <el-select class='yq-w-100' clearable v-model={searchConditionForm.model.cardType}>
                                             {
                                                 cardTypeList.map(item => (
                                                     <el-option
@@ -262,6 +262,7 @@ const searchConditionForm = reactive({
         searchConditionFormRef.value.resetFields()
         mainTable.pagination.page = 1
         mainTable.pagination.pageSize = 20
+        searchConditionForm.model.cardType = ''
         mainTable.getData()
     },
 })
