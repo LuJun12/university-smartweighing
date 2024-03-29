@@ -162,7 +162,7 @@ const searchConditionForm = reactive({
         phoneNo: '',
         cardType: '',
         idCard: '',
-        userType: '',
+        personTypeList: [],
         smartCard: ''
     },
     // 表单配置
@@ -232,13 +232,18 @@ const searchConditionForm = reactive({
         },
         {
             label: '成员类型',
-            prop: 'userType',
+            prop: 'personTypeList',
             type: 'el-select',
             options: computed(()=> {
-                return [{id:'', personTypeName: '全部'}, ...personTypeList.value]
+                return [...personTypeList.value]
             }),
             valueField:'id',
             labelField:'personTypeName',
+            props: {
+                multiple: true,
+                collapseTags: true,
+                collapseTagsTooltip: true
+            }
         },
         {
             label: '卡号',
@@ -266,7 +271,11 @@ const searchConditionForm = reactive({
         mainTable.getData()
     },
 })
-
+const handleContent = e => {
+    let companyName = e.companyName
+    if(e.parentCompanyNames) companyName = e.parentCompanyNames.join('/')
+    return '所属组织:'+companyName
+}
 /* --------------------- 表格 --------------------- */
 const mainTable = reactive({
     // 工具栏
@@ -316,8 +325,31 @@ const mainTable = reactive({
         },
         {
             label: '所属组织',
-            prop: 'organizationName',
+            prop: 'orgList',
             minWidth: 150,
+            showOverflowTooltip:false,
+            type: 'render',
+            render({row}) {
+                return(
+                    <div>
+                        {
+                            row.orgList.map((item)=>{
+                                return(
+                                    <div>
+                                        <el-popover placement="top" width="200" trigger="hover" content={handleContent(item)}>
+                                            {{
+                                                reference() {
+                                                    return <span>{item.companyName}</span>
+                                                }
+                                            }}
+                                        </el-popover>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            }
         },
         {
             label: '姓名',
@@ -326,11 +358,8 @@ const mainTable = reactive({
         },
         {
             label: '成员类型',
-            prop: 'userType',
+            prop: 'personTypes',
             minWidth: 90,
-            formatter(...args) {
-                return personTypeList.value.find(item => item.id == args[2])?.personTypeName || '--'
-            },
         },
         {
             label: '手机号',
@@ -394,7 +423,7 @@ const mainTable = reactive({
         }
         mainTable.config.loading = true
 
-        const res = await api.common.post('/userWallet/pageList',{
+        const res = await api.common.post('/userWallet/pageListV2',{
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
