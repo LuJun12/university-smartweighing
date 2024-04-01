@@ -32,7 +32,7 @@
             </div>
             <div>
                 <el-radio-group
-                    v-model="ruleForm.payType"
+                    v-model="ruleForm.chargingType"
                     :disabled="isEdit2"
                     @change="changePayType"
                 >
@@ -48,7 +48,7 @@
                     </el-radio-button>
                 </el-radio-group>
             </div>
-            <template v-if="ruleForm.payType === '1'">
+            <template v-if="ruleForm.chargingType == '1'">
                 <div class="title-box-top">
                     1.订单结束规则
                 </div>
@@ -81,7 +81,7 @@
                     <span class="m-l mr-10">分钟后自动结算</span>
                 </div>
             </template>
-            <template v-else-if="ruleForm.payType === '2'">
+            <template v-else-if="ruleForm.chargingType == '2'">
                 <div class="title-box-top">
                     1.订单结束规则
                 </div>
@@ -102,11 +102,11 @@
                     <span class="mr-10">订单统一费用为</span>
 
                     <el-input
-                        v-model="ruleForm.unifyPay"
+                        v-model="ruleForm.flatPrice"
                         size="small"
                         class="yq-w-100-i"
                         :disabled="isEdit2"
-                        @input="formartPayMoney($event, 'unifyPay')"
+                        @input="formartPayMoney($event, 'flatPrice')"
                     >
                         <template #suffix>
                             <span class="color-3">元/单</span>
@@ -374,8 +374,8 @@ const ruleForm = reactive({
     orderAutoCloseTime: '',
     orderAutoSettleTime: '',
     tpmAdminPassword: '',
-    payType: '1', // 1：称重收费 2：按订单收费
-    unifyPay: '', // 按订单收费统一费用
+    chargingType: '1', // 1：称重收费 2：按订单收费
+    flatPrice: '', // 按订单收费统一费用
 })
 
 const rules = reactive({
@@ -569,10 +569,10 @@ const getInfo = async () => {
     })
     if (res.success) {
         const result = res.data
-        hasBreakfast.value = result.ccConfigList.some(item => item.id == 1 && item.disabled == 1) && result.canteenRgcc.indexOf('1') >= 0
-        hasLunch.value = result.ccConfigList.some(item => item.id == 2 && item.disabled == 1) && result.canteenRgcc.indexOf('2') >= 0
-        hasDinner.value = result.ccConfigList.some(item => item.id == 3 && item.disabled == 1) && result.canteenRgcc.indexOf('3') >= 0
-        hasNightsnack.value = result.ccConfigList.some(item => item.id == 4 && item.disabled == 1) && result.canteenRgcc.indexOf('4') >= 0
+        // hasBreakfast.value = result.ccConfigList.some(item => item.id == 1 && item.disabled == 1) && result.canteenRgcc.indexOf('1') >= 0
+        // hasLunch.value = result.ccConfigList.some(item => item.id == 2 && item.disabled == 1) && result.canteenRgcc.indexOf('2') >= 0
+        // hasDinner.value = result.ccConfigList.some(item => item.id == 3 && item.disabled == 1) && result.canteenRgcc.indexOf('3') >= 0
+        // hasNightsnack.value = result.ccConfigList.some(item => item.id == 4 && item.disabled == 1) && result.canteenRgcc.indexOf('4') >= 0
         ruleForm.breakfastTime = [result.breakfastStartTime, result.breakfastEndTime]
         ruleForm.lunchTime = [result.lunchStartTime, result.lunchEndTime]
         ruleForm.dinnerTime = [result.dinnerStartTime, result.dinnerEndTime]
@@ -588,6 +588,8 @@ const getInfo = async () => {
         ruleForm.orderAutoCloseTime = result.orderAutoCloseTime
         ruleForm.orderAutoSettleTime = result.orderAutoSettleTime
         ruleForm.tpmAdminPassword = result.tpmAdminPassword
+        ruleForm.chargingType = result.chargingType
+        ruleForm.flatPrice = result.flatPrice
     }
 }
 
@@ -607,6 +609,8 @@ const saveupdataInfo = async (params, callback) => {
         orderAutoCloseTime: ruleForm.orderAutoCloseTime,
         orderAutoSettleTime: ruleForm.orderAutoSettleTime,
         tpmAdminPassword: ruleForm.tpmAdminPassword,
+        chargingType: ruleForm.chargingType,
+        flatPrice: ruleForm.flatPrice
     })
     if (res.success) {
         getSetting()
