@@ -187,10 +187,6 @@ const searchConditionForm = reactive({
     },
     // 表单项配置
     items: [
-        // {
-        //     label: '账号',
-        //     prop: 'userAccount',
-        // },
         {
             label: '姓名',
             prop: 'userName',
@@ -365,6 +361,12 @@ const mainTable = reactive({
             label: '手机号',
             prop: 'phoneNo',
             minWidth: 100,
+            // 类型为脱敏内容
+            type: 'mask',
+            // 脱敏的规则（默认：xxx****xxxx）
+            maskFormatter: 'xx***xx',
+            // 脱敏的空白占位符
+            maskEmpty: '--',
         },
         {
             label: '编号类型',
@@ -378,6 +380,12 @@ const mainTable = reactive({
             label: '编号',
             prop: 'idCard',
             minWidth: 100,
+            // 类型为脱敏内容
+            type: 'mask',
+            // 脱敏的规则（默认：xxx****xxxx）
+            maskFormatter: 'xx***xx',
+            // 脱敏的空白占位符
+            maskEmpty: '--',
         },
         {
             label: '卡号',
@@ -479,7 +487,7 @@ const changeState = async row => {
 
 const showDetail = row => {
     const { page, pageSize } = mainTable.pagination
-    $routeState.go('walletManageWalletflow', { userAccount: row.userAccount }, { model: searchConditionForm.model, pagination: { page, pageSize } })
+    $routeState.go('walletManageWalletflow', { dinersId: row.dinersId }, { model: searchConditionForm.model, pagination: { page, pageSize } })
 }
 
 const allIn = () => {

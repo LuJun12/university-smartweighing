@@ -44,7 +44,7 @@ const searchConditionForm = reactive({
     model: {
         userName: '',
         organizationId: '',
-        userAccount: '',
+        dinersId: '',
         flowType: '',
         flowEvent: '',
         id: '',
@@ -82,8 +82,8 @@ const searchConditionForm = reactive({
             prop: 'userName',
         },
         {
-            label: '账号',
-            prop: 'userAccount',
+            label: '成员Id',
+            prop: 'dinersId',
         },
         {
             label: '钱包类型',
@@ -236,8 +236,8 @@ const mainTable = reactive({
             },
         },
         {
-            label: '账号',
-            prop: 'userAccount',
+            label: '成员Id',
+            prop: 'dinersId',
             minWidth: 100,
         },
         {
