@@ -1,6 +1,5 @@
 <template>
     <div
-        v-loading="loading"
         class="yq-page-container yq-page-container--no-padding yq-flex-column"
     >
         <CardPanel
@@ -116,44 +115,7 @@ const props = defineProps({
 })
 const emit = defineEmits(['success'])
 
-/* --------------------- 表单 --------------------- */
-const loading = ref(false)
-
-const mainFormRef = ref()
 const mainForm = reactive({
-    // 表单初始数据（用于重置表单）
-    originalModel: {},
-    // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
-    model: {},
-    // 表单校验规则
-    rules: {},
-    // 表单配置
-    config: {
-        // 行内表单
-        inRow: true,
-        // labelPosition: 'left',
-        // 每个表单项占据的列数
-        defaultColSpan: 10,
-        // 标签长度
-        labelWidth: 100,
-        // 标签后缀
-        labelSuffix: '',
-        emptyText: '--',
-        // 为指定类型的表单项设置默认属性
-        defaultProps: {
-            'el-input': {
-                maxlength: 50,
-                modelModifiers: 'trim',
-                style: 'width: 200px',
-            },
-            'el-select': { style: 'width: 200px' },
-        },
-    },
-    // 表单项配置
-    items: [],
-    // 根据是否只读模式初始化表单项配置
-    // 获取数据
-    loading: false,
     // 提交表单
     submitting: false,
     submit: async () => {
@@ -210,7 +172,6 @@ const mainForm = reactive({
             }
         }
     },
-    //  图片的上
 })
 
 /* --------------------- 表格 --------------------- */
@@ -277,33 +238,6 @@ const exportFun = async e => {
     let targetEl = document.getElementsByClassName('export-task-badge')[0]
     $utils.flyToAnimation(e.target, targetEl)
 }
-
-/* --------------------- watch -------------------- */
-watch(
-    () => props.planetId,
-    newValue => {
-        // 重置表单数据
-        mainForm.model = Object.assign({}, mainForm.originalModel)
-        mainFormRef.value?.resetFields()
-        if (newValue) {
-            // 获取表单数据
-            // mainForm.getData()
-        }
-    },
-    {
-        immediate: true,
-    }
-)
-
-onMounted(async () => {
-    loading.value = true
-    mainTable.config.loading = true
-    // 重置表单数据
-
-    // 根据是否只读模式初始化表单项配置
-    mainTable.config.loading = false
-    loading.value = false
-})
 </script>
 
 <style lang="less" scoped>
