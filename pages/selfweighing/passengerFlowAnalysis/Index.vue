@@ -12,7 +12,7 @@
         <div class="search_box">
             <div class="search_item">
                 <span>统计范围：</span>
-                <el-select v-model="canteenId" clearable style="width: 200px" placeholder="请选择" @change="canteenIdChange">
+                <el-select v-model="canteenId" :clearable="false" style="width: 200px" placeholder="请选择" @change="canteenIdChange">
                     <el-option v-for="item in cateOptions" :key="item.value" :label="item.lable" :value="item.value" />
                 </el-select>
             </div>
