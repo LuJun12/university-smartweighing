@@ -227,7 +227,7 @@ const exportFun = async e => {
         organizationId: $storage.get('userInfo')?.organizationId,
         templateEnumName: 'USER_WALLET_AMOUNT_EXPORT',
         param: JSON.stringify({
-            organizationId: $storage.get('userInfo')?.organizationId,
+            organizationId: $storage.get('userInfo')?.maxOrgId,
         }),
         remark: '',
         type: 0,
