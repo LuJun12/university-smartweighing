@@ -11,7 +11,7 @@
                     </div>
                     <div class="search_item">
                         <span>餐次：</span>
-                        <el-select v-model="mealTimes" clearable style="width: 80px" placeholder="请选择">
+                        <el-select v-model="mealTimes" clearable style="width: 100px" placeholder="请选择">
                             <el-option v-for="item in cateOptions" :key="item.value" :label="item.label" :value="item.value" />
                         </el-select>
                     </div>
@@ -157,6 +157,10 @@ const cateOptions = ref([
         value: '',
     },
     {
+        label: '全餐次',
+        value: '7',
+    },
+    {
         label: '早餐',
         value: '1',
     },
@@ -171,6 +175,14 @@ const cateOptions = ref([
     {
         label: '夜宵',
         value: '4',
+    },
+    {
+        label: '下午茶',
+        value: '5',
+    },
+    {
+        label: '早上点心',
+        value: '6',
     },
 ])
 

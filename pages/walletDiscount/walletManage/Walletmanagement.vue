@@ -1,60 +1,119 @@
 <template>
-    <div class="yq-page-container yq-flex-column">
-        <div class="yq-page-search yq-mb-16 yq-rounded-4 yq-bg-white">
-            <ElPlusForm
-                ref="searchConditionFormRef"
-                v-model="searchConditionForm.model"
-                :form-config="searchConditionForm.config"
-                :form-items="searchConditionForm.items"
-                :disabled="mainTable.config.loading"
-            />
-        </div>
+    <FakeRouterView :view-config="fakeRouterViewConfig">
+        <div class="yq-page-container yq-flex-column">
+            <div class="yq-page-search yq-mb-16 yq-rounded-4 yq-bg-white">
+                <ElPlusForm
+                    ref="searchConditionFormRef"
+                    v-model="searchConditionForm.model"
+                    :form-config="searchConditionForm.config"
+                    :form-items="searchConditionForm.items"
+                    :disabled="mainTable.config.loading"
+                />
+            </div>
 
-        <div class="yq-flex-1 yq-p-16 yq-rounded-4 yq-bg-white">
-            <ElPlusTable :table-toolbar="mainTable.toolbar" :table-data="mainTable.data" :table-config="mainTable.config" :table-columns="mainTable.columns" :table-pagination="mainTable.pagination">
-                <template #action="{ row }">
-                    <template v-if="row.status">
-                        <el-button link type="primary" @click="topUp(row)">充值</el-button>
-                        <el-button link type="primary" @click="extract(row)">提现</el-button>
-                        <el-button link type="primary" @click="changeState(row)">调整</el-button>
-                        <el-button link type="primary" @click="showDetail(row)">查看明细</el-button>
+            <div class="yq-flex-1 yq-p-16 yq-rounded-4 yq-bg-white">
+                <ElPlusTable
+                    :table-toolbar="mainTable.toolbar"
+                    :table-data="mainTable.data"
+                    :table-config="mainTable.config"
+                    :table-columns="mainTable.columns"
+                    :table-pagination="mainTable.pagination"
+                >
+                    <template #action="{ row }">
+                        <template v-if="row.status">
+                            <el-button
+                                link
+                                type="primary"
+                                @click="topUp(row)"
+                            >
+                                充值
+                            </el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                @click="extract(row)"
+                            >
+                                提现
+                            </el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                @click="changeState(row)"
+                            >
+                                调整
+                            </el-button>
+                            <el-button
+                                link
+                                type="primary"
+                                @click="showDetail(row)"
+                            >
+                                查看明细
+                            </el-button>
+                        </template>
+                        <el-button
+                            v-else
+                            link
+                            type="primary"
+                            @click="topUp(row)"
+                        >
+                            首充激活
+                        </el-button>
                     </template>
-                    <el-button v-else link type="primary" @click="topUp(row)">首充激活</el-button>
-                </template>
-            </ElPlusTable>
-        </div>
-        <ElPlusFormDialog
-            ref="walletDialogEl"
-            v-model="walletDialog.visible"
-            v-model:formModel="walletDialog.form"
-            :dialog-config="walletDialog.dialogConfig"
-            :form-rules="walletDialog.formRules"
-            :form-config="walletDialog.formConfig"
-            :form-items="walletDialog.formItems"
-            :submitting="walletDialog.submitting"
-            @closed="() => walletDialogEl?.resetFields()"
-            @submit="walletDialog.submit"
-        >
-            <template #money>
-                <div class="yq-wp-100">
-                    <el-input v-model="walletDialog.form.money" :placeholder="`请输入${walletDialog.formItems[1].label}`" clearable @input="moneyInput">
-                        <template #suffix>元</template>
-                    </el-input>
-                    <div class="yq-flex yq-justify-between">
-                        <span>钱包余额：{{ walletDialog.balance }}元</span>
-                        <el-button v-if="walletDialog.formType === 2" link type="primary" :disabled="walletDialog.submitting" @click="allIn">全部提现</el-button>
+                </ElPlusTable>
+            </div>
+            <ElPlusFormDialog
+                ref="walletDialogEl"
+                v-model="walletDialog.visible"
+                v-model:formModel="walletDialog.form"
+                :dialog-config="walletDialog.dialogConfig"
+                :form-rules="walletDialog.formRules"
+                :form-config="walletDialog.formConfig"
+                :form-items="walletDialog.formItems"
+                :submitting="walletDialog.submitting"
+                @closed="() => walletDialogEl?.resetFields()"
+                @submit="walletDialog.submit"
+            >
+                <template #money>
+                    <div class="yq-wp-100">
+                        <el-input
+                            v-model="walletDialog.form.money"
+                            :placeholder="`请输入${walletDialog.formItems[1].label}`"
+                            clearable
+                            @input="moneyInput"
+                        >
+                            <template #suffix>
+                                元
+                            </template>
+                        </el-input>
+                        <div class="yq-flex yq-justify-between">
+                            <span>钱包余额：{{ walletDialog.balance }}元</span>
+                            <el-button
+                                v-if="walletDialog.formType === 2"
+                                link
+                                type="primary"
+                                :disabled="walletDialog.submitting"
+                                @click="allIn"
+                            >
+                                全部提现
+                            </el-button>
+                        </div>
                     </div>
-                </div>
-            </template>
-        </ElPlusFormDialog>
-    </div>
+                </template>
+            </ElPlusFormDialog>
+        </div>
+        <template #importData>
+            <ImportData v-bind="fakeRouterViewConfig.importData.props" />
+        </template>
+    </FakeRouterView>
 </template>
 
 <script setup lang="jsx">
 /* --------------------- 引用 --------------------- */
-import { ref, reactive, inject, onMounted } from 'vue'
+import { ref, reactive, inject, onMounted, computed } from 'vue'
 import ElPlusFormDialog from '@/components/ElPlusFormDialog.vue'
 import api from '@smartweighing/api'
+import FakeRouterView from '@/components/FakeRouterView.vue'
+import ImportData from './ImportData.vue'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -65,15 +124,46 @@ const $fakeRouter = inject('$fakeRouter')
 const $routeState = inject('$routeState')
 const $storage = inject('$storage')
 
+/* ---------------- 伪命名视图配置 ----------------- */
+const fakeRouterViewConfig = reactive({
+    importData: {
+        // 显隐方式
+        hiddenType: 'vIf',
+        // 视图属性
+        props: {},
+    },
+})
+
+const cardTypeList = [
+    {
+        label: '身份证',
+        value: '1'
+    },
+    {
+        label: '学工号',
+        value: '2'
+    },
+    {
+        label: '工号',
+        value: '3'
+    },
+    {
+        label: '护照',
+        value: '4'
+    },
+]
 /* ------------------- 查询条件 -------------------- */
 const searchConditionFormRef = ref()
 const searchConditionForm = reactive({
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     model: {
-        userAccount: '',
         userName: '',
         organizationId: '',
         phoneNo: '',
+        cardType: '',
+        idCard: '',
+        personTypeList: [],
+        smartCard: ''
     },
     // 表单配置
     config: {
@@ -83,7 +173,7 @@ const searchConditionForm = reactive({
         nowrap: false,
         // 标签后缀
         labelSuffix: '：',
-        labelWidth: '70',
+        // labelWidth: '70',
         // 为指定类型的表单项设置默认属性
         defaultProps: {
             'el-input': {
@@ -98,16 +188,62 @@ const searchConditionForm = reactive({
     // 表单项配置
     items: [
         {
-            label: '账号',
-            prop: 'userAccount',
-        },
-        {
             label: '姓名',
             prop: 'userName',
         },
         {
             label: '手机号',
             prop: 'phoneNo',
+        },
+        {
+            label: '编号',
+            prop: 'idCard',
+            type: 'render',
+            render() {
+                let placeholder = '请输入' + (cardTypeList.find(item=>item.value == searchConditionForm.model.cardType)?.label || '编号')
+                return (
+                    <>
+                        <el-input v-model={searchConditionForm.model.idCard} placeholder={placeholder}>
+                            {{
+                                prepend(){
+                                    return (
+                                        <el-select class='yq-w-100' clearable v-model={searchConditionForm.model.cardType}>
+                                            {
+                                                cardTypeList.map(item => (
+                                                    <el-option
+                                                        key={item.value}
+                                                        label={item.label}
+                                                        value={item.value}
+                                                    />
+                                                ))
+                                            }
+                                        </el-select>
+                                    )
+                                }
+                            }}
+                        </el-input>
+                    </>
+                )
+            }
+        },
+        {
+            label: '成员类型',
+            prop: 'personTypeList',
+            type: 'el-select',
+            options: computed(()=> {
+                return [...personTypeList.value]
+            }),
+            valueField:'id',
+            labelField:'personTypeName',
+            props: {
+                multiple: true,
+                collapseTags: true,
+                collapseTagsTooltip: true
+            }
+        },
+        {
+            label: '卡号',
+            prop: 'smartCard',
         },
         {
             // 类型为渲染函数
@@ -127,16 +263,26 @@ const searchConditionForm = reactive({
         searchConditionFormRef.value.resetFields()
         mainTable.pagination.page = 1
         mainTable.pagination.pageSize = 20
+        searchConditionForm.model.cardType = ''
         mainTable.getData()
     },
 })
-
+const handleContent = e => {
+    let companyName = e.companyName
+    if(e.parentCompanyNames) companyName = e.parentCompanyNames.join('/')
+    return '所属组织:'+companyName
+}
 /* --------------------- 表格 --------------------- */
 const mainTable = reactive({
     // 工具栏
     toolbar: {
         title: '钱包信息',
-        render: scope => {},
+        render: scope => {
+            return <el-button type="primary" onClick={()=> {
+                $fakeRouter.go('importData', '导入充值', {
+                })
+            }}>导入充值</el-button>
+        },
     },
     // 表格数据
     data: [],
@@ -169,14 +315,37 @@ const mainTable = reactive({
     // 字段配置
     columns: [
         {
-            label: '账号',
-            prop: 'userAccount',
+            label: '成员Id',
+            prop: 'dinersId',
             minWidth: 120,
         },
         {
             label: '所属组织',
-            prop: 'organizationName',
+            prop: 'orgList',
             minWidth: 150,
+            showOverflowTooltip:false,
+            type: 'render',
+            render({row}) {
+                return(
+                    <div>
+                        {
+                            row.orgList.map((item)=>{
+                                return(
+                                    <div>
+                                        <el-popover placement="top" width="200" trigger="hover" content={handleContent(item)}>
+                                            {{
+                                                reference() {
+                                                    return <span>{item.companyName}</span>
+                                                }
+                                            }}
+                                        </el-popover>
+                                    </div>
+                                )
+                            })
+                        }
+                    </div>
+                )
+            }
         },
         {
             label: '姓名',
@@ -184,21 +353,43 @@ const mainTable = reactive({
             minWidth: 90,
         },
         {
-            label: '身份',
-            prop: 'userType',
+            label: '成员类型',
+            prop: 'personTypes',
             minWidth: 90,
-            formatter(...args) {
-                const typeMap = {
-                    1: '学生',
-                    2: '老师',
-                    3: '访客',
-                }
-                return typeMap[args[2]] ?? args[2] ?? '--'
-            },
         },
         {
             label: '手机号',
             prop: 'phoneNo',
+            minWidth: 100,
+            // 类型为脱敏内容
+            type: 'mask',
+            // 脱敏的规则（默认：xxx****xxxx）
+            maskFormatter: 'xx***xx',
+            // 脱敏的空白占位符
+            maskEmpty: '--',
+        },
+        {
+            label: '编号类型',
+            prop: 'cardType',
+            minWidth: 100,
+            formatter(...args){
+                return cardTypeList.find(item => item.value == args[2])?.label || '--'
+            }
+        },
+        {
+            label: '编号',
+            prop: 'idCard',
+            minWidth: 100,
+            // 类型为脱敏内容
+            type: 'mask',
+            // 脱敏的规则（默认：xxx****xxxx）
+            maskFormatter: 'xx***xx',
+            // 脱敏的空白占位符
+            maskEmpty: '--',
+        },
+        {
+            label: '卡号',
+            prop: 'smartCard',
             minWidth: 100,
         },
         {
@@ -240,7 +431,7 @@ const mainTable = reactive({
         }
         mainTable.config.loading = true
 
-        const res = await api.smartWeighing.post('/userWallet/pageList',{
+        const res = await api.common.post('/userWallet/pageListV2',{
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
@@ -296,7 +487,7 @@ const changeState = async row => {
 
 const showDetail = row => {
     const { page, pageSize } = mainTable.pagination
-    $routeState.go('walletManageWalletflow', { userAccount: row.userAccount,userName:row.userName }, { model: searchConditionForm.model, pagination: { page, pageSize } })
+    $routeState.go('walletManageWalletflow', { dinersId: row.dinersId, userName: row.userName }, { model: searchConditionForm.model, pagination: { page, pageSize } })
 }
 
 const allIn = () => {
@@ -429,19 +620,19 @@ const walletDialog = reactive({
         switch (walletDialog.formType) {
             case 1:
                 {
-                    res = await api.smartWeighing.post('/userWallet/recharge',params)
+                    res = await api.common.post('/userWallet/recharge',params)
                 }
                 break
             case 2:
                 {
-                    res = await api.smartWeighing.post('/userWallet/withdrawal',params)
+                    res = await api.common.post('/userWallet/withdrawal',params)
                 }
                 break
             case 3:
                 {
                     params.adjustmentAmount = walletDialog.form.money
                     params.remark = walletDialog.form.remark
-                    res = await api.smartWeighing.post('/userWallet/adjustment',params)
+                    res = await api.common.post('/userWallet/adjustment',params)
                 }
                 break
 
@@ -473,9 +664,17 @@ const moneyInput = v => {
         }
     }
 }
-
+// 成员类型
+const personTypeList = ref([])
+const getPersonTypeList = async () => {
+    const res = await api.manage.post('/busi/company/person/selectPersonTypeList', {})
+    if (res.success) {
+        personTypeList.value = res.data
+    }
+}
 /* ------------------- 生命周期 -------------------- */
 onMounted(() => {
+    getPersonTypeList()
     const storeData = $routeState.get()?.data
     if (storeData) {
         Object.assign(searchConditionForm.model, storeData.model)

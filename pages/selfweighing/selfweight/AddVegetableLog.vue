@@ -68,6 +68,10 @@ const searchConditionForm = reactive({
                     value: '',
                 },
                 {
+                    label: '全餐次',
+                    value: '7',
+                },
+                {
                     label: '早餐',
                     value: '1',
                 },
@@ -82,6 +86,14 @@ const searchConditionForm = reactive({
                 {
                     label: '夜宵',
                     value: '4',
+                },
+                {
+                    label: '下午茶',
+                    value: '5',
+                },
+                {
+                    label: '早上点心',
+                    value: '6',
                 },
             ],
         },
@@ -183,6 +195,12 @@ const mainTable = reactive({
                     return <span>晚餐</span>
                 } else if (row.mealTimePeriod && row.mealTimePeriod == 4) {
                     return <span>夜宵</span>
+                } else if (row.mealTimePeriod && row.mealTimePeriod == 5) {
+                    return <span>下午茶</span>
+                } else if (row.mealTimePeriod && row.mealTimePeriod == 6) {
+                    return <span>早上点心</span>
+                } else if (row.mealTimePeriod && row.mealTimePeriod == 7) {
+                    return <span>全餐次</span>
                 } else {
                     return <span>--</span>
                 }
