@@ -487,7 +487,7 @@ const changeState = async row => {
 
 const showDetail = row => {
     const { page, pageSize } = mainTable.pagination
-    $routeState.go('walletManageWalletflow', { dinersId: row.dinersId }, { model: searchConditionForm.model, pagination: { page, pageSize } })
+    $routeState.go('walletManageWalletflow', { userAccount: row.userAccount,userName:row.userName }, { model: searchConditionForm.model, pagination: { page, pageSize } })
 }
 
 const allIn = () => {

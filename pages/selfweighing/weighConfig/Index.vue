@@ -565,7 +565,7 @@ const getSetting = () => {
 }
 const getInfo = async () => {
     const res = await api.smartWeighing.post('/canteen/mealSmartBizConfig/getByCanteenId', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
     })
     if (res.success) {
         const result = res.data
@@ -603,7 +603,7 @@ const saveupdataInfo = async (params, callback) => {
         return false
     }
     const res = await api.smartWeighing.post('/canteen/mealSmartBizConfig/update', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
         fpmAdminPassword: ruleForm.fpmAdminPassword,
         fpmAutoDishRemovalTime: ruleForm.fpmAutoDishRemovalTime,
         orderAutoCloseTime: ruleForm.orderAutoCloseTime,
@@ -624,7 +624,7 @@ const saveupdataInfo = async (params, callback) => {
 
 const updataInfo = async (params, callback) => {
     const res = api.smartWeighing.post('/canteen/mealSmartBizConfig/update', {
-        organizationId: $storage.get('userInfo')?.organizationId,
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
         ...params,
     })
     if (res.success) {

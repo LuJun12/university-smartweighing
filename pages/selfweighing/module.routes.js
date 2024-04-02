@@ -176,10 +176,19 @@ export default [
     {
         path: '/passengerFlowAnalysis/Index',
         name: 'passengerFlowAnalysisIndex',
-        component: () => import('./undeveloped/Index.vue'),
+        component: () => import('./passengerFlowAnalysis/Index.vue'),
         meta: {
             title: '客流分析',
             menuRouteName: 'passengerFlowAnalysisIndex',
+        },
+    },
+    {
+        path: '/passengerFlowAnalysis/setting',
+        name: 'passengerFlowAnalysissetting',
+        component: () => import('./passengerFlowAnalysis/setting.vue'),
+        meta: {
+            title: '客流设置',
+            menuRouteName: 'passengerFlowAnalysissetting',
         },
     },
     {

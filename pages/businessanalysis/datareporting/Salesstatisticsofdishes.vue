@@ -5,8 +5,8 @@
                 <div class="search_box" style="margin-top: 24px">
                     <div class="search_item">
                         <span>统计范围：</span>
-                        <el-select v-model="organizationId" :clearable="false" style="width: 200px" placeholder="请选择">
-                            <el-option v-for="item in cateOptionsOrg" :key="item.value" :label="item.lable" :value="item.value" />
+                        <el-select v-model="organizationId" :clearable="false" style="width: 200px" placeholder="请选择" @change="clickHandle">
+                            <el-option v-for="item in cateOptionsOrg" :key="item.value" :label="item.lable" :value="item.value"/>
                         </el-select>
                     </div>
                     <div class="search_item">
@@ -399,18 +399,21 @@ const disabledDate = time => {
     const sixMonth = new Date().setMonth(new Date().getMonth() - 6)
     return time.getTime() > new Date().getTime() - 8.64e7 || time.getTime() < sixMonth
 }
-const organizationId = ref($storage.get('userInfo')?.organizationId)
+const organizationId = ref()
 const cateOptionsOrg = ref([])
 const getOrganizationList = async () => {
-    const res = await api.smartWeighing.post('/sys/organization/getCanteenList', {
-        orgId: $storage.get('userInfo')?.organizationId,
+    const res = await api.smartWeighing.post('/statistics/operatingStatistics/selectOperatingCanteenList', {
+        organizationId: $storage.get('userInfo')?.maxOrgId || $storage.get('userInfo')?.organizationId,
     })
     cateOptionsOrg.value = res.data.map(v => {
         return {
-            lable: v.name,
-            value: v.id,
+            lable: v.companyName,
+            value: v.organizationId,
         }
     })
+    if(res.data&&res.data.length){
+        organizationId.value = res.data[0].organizationId
+    }
 }
 /* ------------------- computed ------------------- */
 
@@ -419,9 +422,9 @@ const getOrganizationList = async () => {
 /* -------------------- 初始化 -------------------- */
 
 /* ------------------- 生命周期 ------------------- */
-onMounted(() => {
-    getOrganizationList()
-    getData()
+onMounted(async() => {
+    await getOrganizationList()
+    await getData()
 })
 </script>
 
