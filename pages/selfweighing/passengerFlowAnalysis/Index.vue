@@ -1,43 +1,19 @@
 <template>
     <div class="yq-page-container">
         <div class="title yq-flex-row-align yq-flex-row-space-between">
-            <div class="left">
-                当前客流情况
-            </div>
+            <div class="left">当前客流情况</div>
             <div class="right">
-                <el-button
-                    type="primary"
-                    @click="mainTable.getData(1)"
-                >
-                    刷新数据
-                </el-button>
+                <el-button type="primary" @click="mainTable.getData(1)">刷新</el-button>
             </div>
         </div>
         <div class="yq-h-200 yq-mt-16 yq-mb-16 yq-rounded-4 yq-bg-white">
-            <ElPlusTable
-                :table-toolbar="mainTable.toolbar"
-                :table-data="mainTable.data"
-                :table-config="mainTable.config"
-                :table-columns="mainTable.columns"
-                :table-pagination="mainTable.pagination"
-            />
+            <ElPlusTable :table-toolbar="mainTable.toolbar" :table-data="mainTable.data" :table-config="mainTable.config" :table-columns="mainTable.columns" :table-pagination="mainTable.pagination" />
         </div>
         <div class="search_box">
             <div class="search_item">
                 <span>统计范围：</span>
-                <el-select
-                    v-model="canteenId"
-                    clearable
-                    style="width: 200px"
-                    placeholder="请选择"
-                    @change="canteenIdChange"
-                >
-                    <el-option
-                        v-for="item in cateOptions"
-                        :key="item.value"
-                        :label="item.lable"
-                        :value="item.value"
-                    />
+                <el-select v-model="canteenId" clearable style="width: 200px" placeholder="请选择" @change="canteenIdChange">
+                    <el-option v-for="item in cateOptions" :key="item.value" :label="item.lable" :value="item.value" />
                 </el-select>
             </div>
         </div>
@@ -56,57 +32,39 @@
                 />
                 <!-- <el-select v-model="organizationId" clearable style="width: 200px" placeholder="请选择">
                     <el-option v-for="item in cateOptionst" :key="item.value" :label="item.lable" :value="item.value" />
-                    </el-select>-->
+                </el-select>-->
             </div>
             <div class="right" />
         </div>
         <div class="yq-h-400-i">
-            <BarLineEchart
-                echart-id="10001"
-                :echart-data="stepData"
-            />
+            <BarLineEchart echart-id="10001" :echart-data="stepData" />
         </div>
         <el-row :gutter="20">
             <el-col :span="12">
                 <div class="title yq-flex-row-align yq-mt-16 yq-mb-16 yq-flex-row-space-between">
-                    <div class="left">
-                        今日昨日客流对比
-                    </div>
+                    <div class="left">今日昨日客流对比</div>
                     <div class="right" />
                 </div>
                 <div class="yq-h-400">
-                    <BarLineEchart
-                        echart-id="10002"
-                        :echart-data="stepDataDay"
-                    />
+                    <BarLineEchart echart-id="10002" :echart-data="stepDataDay" />
                 </div>
             </el-col>
             <el-col :span="12">
                 <div class="title yq-flex-row-align yq-mt-16 yq-mb-16 yq-flex-row-space-between">
-                    <div class="left">
-                        近12周客流最多工作周排名
-                    </div>
+                    <div class="left">近12周客流最多工作周排名</div>
                     <div class="right" />
                 </div>
                 <div class="yq-h-400">
-                    <BarLineEchart
-                        echart-id="10003"
-                        :echart-data="stepDataDayF"
-                    />
+                    <BarLineEchart echart-id="10003" :echart-data="stepDataDayF" />
                 </div>
             </el-col>
         </el-row>
         <div class="title yq-flex-row-align yq-mt-16 yq-mb-16 yq-flex-row-space-between">
-            <div class="left">
-                年度累计客流统计
-            </div>
+            <div class="left">年度累计客流统计</div>
             <div class="right" />
         </div>
         <div class="yq-h-400-i">
-            <BarLineEchart
-                echart-id="10004"
-                :echart-data="stepDataSay"
-            />
+            <BarLineEchart echart-id="10004" :echart-data="stepDataSay" />
         </div>
     </div>
 </template>
@@ -375,7 +333,7 @@ const stepDataDayF= ref({
     //     left: 'center',
     // },
     xList: [],
-    carouselSize: 12,
+    carouselSize: 4,
     xAxisName: '',
     showDataZoom: true,
     yAxis: [
