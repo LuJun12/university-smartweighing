@@ -102,7 +102,10 @@
             </ElPlusFormDialog>
         </div>
         <template #importData>
-            <ImportData v-bind="fakeRouterViewConfig.importData.props" />
+            <ImportData
+                v-bind="fakeRouterViewConfig.importData.props"
+                @success="mainTable.getData(1)"
+            />
         </template>
     </FakeRouterView>
 </template>
