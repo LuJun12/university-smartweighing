@@ -190,6 +190,12 @@
             <el-button type="primary" class="tk-btn" v-if="detailInfo.info.orderStatus === 1 && activeName === 'first'" @click="kuikuanhandle">退款</el-button>
             <el-tabs v-model="activeName" v-if="detailInfo.info.orderStatus !== 4">
                 <el-tab-pane label="菜品信息" name="first">
+                    <div class="fixed-price" v-if="detailInfo.info.orderType == 2">
+                        <span>本订单收费方式为</span>
+                        <span class="fixed-price-point">按订单收费</span>
+                        <span>，订单统一收费</span>
+                        <span class="fixed-price-point">30元</span>
+                    </div>
                     <el-table :data="dataListDish" style="width: 100%; margin-top: 20px" @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="55"></el-table-column>
                         <el-table-column v-for="(item, index) in columnsdish" :prop="item.prop" :key="index" :formatter="item.formatter" :label="item.label" :width="item.width" :type="item.type">
@@ -566,5 +572,13 @@ onMounted(() => {
 }
 .stype-name {
     font-size: 16px;
+}
+.fixed-price {
+    font-size: 14px;
+    .fixed-price-point {
+        color: var(--el-color-primary);
+        font-size: 16px;
+        font-weight: bold;
+    }
 }
 </style>
