@@ -70,14 +70,34 @@ const initExcelHandle = async () => {
             frozenMode: true,
         },
         hook: {
+            // 执行单元格修改后的操作
             cellUpdated: async (r, c, oldValue, newValue, isRefresh) => {
-                emit('updateCellOne', { r, c, newValue })
-                // 执行单元格修改后的操作
+                await nextTick()
+                emit('updateCellOne')
             },
+            // 选区粘贴前触发
             rangePasteBefore: async () => {
                 await nextTick()
                 emit('updateCellOne')
             },
+            // 表格创建之后触发
+            workbookCreateAfter() {
+                const sheet = luckysheet.getSheetData().slice(1)
+                let sheetLength = sheet.length
+                for(let i = 0; i < sheetLength; i++){
+                    sheet[i].forEach((item, idx)=>{
+                        luckysheet.setCellValue(
+                            i + 1,
+                            idx,
+                            { ct: { fa: '@', t: 's' }, },
+                            {
+                                isRefresh: sheetLength === i + 1 && idx + 1 === sheet[i].length ? true: false, // 最后一个元素才刷新
+                                triggerBeforeUpdate: false, // 是否触发更新前hook；默认为`true`
+                                triggerUpdated: false, // 是否触发更新后hook；默认为`true`
+                            } )
+                    })
+                }
+            }
         },
     }
     await nextTick()
@@ -90,21 +110,6 @@ const destroy = () => {
 }
 
 const checkTable = () => {
-    const excelData = luckysheet.flowdata()
-    excelData.map((item, index) => {
-        if (item) {
-            item.map(ll => {
-                if (ll) {
-                    ll.m = ll.v
-                    ll.v = ll.v
-                    ll.ct = {
-                        fa: '@',
-                        t: 's',
-                    }
-                }
-            })
-        }
-    })
     const celldata = luckysheet.getAllSheets()[0].data
     let tableList = [],
         errorList = []

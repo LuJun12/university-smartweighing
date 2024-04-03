@@ -30,12 +30,6 @@
                     class="yq-flex-1 yq-flex-column yq-overflow-auto"
                     style="border-right: 1px dashed"
                 >
-                    <div
-                        style="font-weight: 600"
-                        class="yq-pt-10-i"
-                    >
-                        导入数据
-                    </div>
                     <div class="yq-wp-99 yq-hp-100 yq-relative yq-mt-10 yq-flex-1 yq-mr-10">
                         <Luckysheet
                             ref="luckysheetEl"
