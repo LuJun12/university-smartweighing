@@ -32,6 +32,7 @@
             </div>
             <div>
                 <el-radio-group
+                    class="radio-group"
                     v-model="ruleForm.chargingType"
                     :disabled="isEdit2"
                     @change="changePayType"
@@ -721,7 +722,7 @@ onMounted(() => {
 })
 </script>
 
-<style lang="less" scoped>
+<style lang="scss" scoped>
 .title-box {
     display: flex;
     align-items: center;
@@ -808,6 +809,14 @@ onMounted(() => {
     }
     &-3{
         color: #333333;
+    }
+}
+.radio-group {
+    &:deep() {
+        .el-radio-button__original-radio:disabled:checked + .el-radio-button__inner {
+            background-color: #ccc;
+            color: white;
+        }
     }
 }
 </style>
