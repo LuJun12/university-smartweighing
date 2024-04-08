@@ -206,7 +206,7 @@ const searchConditionForm = reactive({
                 let placeholder = '请输入' + (cardTypeList.find(item=>item.value == searchConditionForm.model.cardType)?.label || '编号')
                 return (
                     <>
-                        <el-input v-model={searchConditionForm.model.idCard} placeholder={placeholder}>
+                        <el-input v-model={searchConditionForm.model.idCard} placeholder={placeholder} maxLength={50}>
                             {{
                                 prepend(){
                                     return (
