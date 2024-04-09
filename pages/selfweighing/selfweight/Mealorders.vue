@@ -247,6 +247,11 @@ const mainTable = reactive({
             prop: 'totalPrice',
             minWidth: 200,
             formatter: (row, column, cellValue) => {
+                if(row.orderType == 2) {
+                    if(!row.itemNames && row.orderStatus !== 1) {
+                        return '--'
+                    }
+                }
                 if (!cellValue && row.orderStatus !== 1) {
                     return '--'
                 }
@@ -259,6 +264,11 @@ const mainTable = reactive({
             width: 180,
             formatter: (row, column, cellValue) => {
                 cellValue = row.orderType == 2 ? row.totalPrice : cellValue
+                if(row.orderType == 2) {
+                    if(!row.itemNames && row.orderStatus !== 1) {
+                        return '--'
+                    }
+                }
                 if (!cellValue && row.orderStatus !== 1) {
                     return '--'
                 }
