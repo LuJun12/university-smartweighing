@@ -258,6 +258,7 @@ const mainTable = reactive({
             prop: 'amountReceivable',
             width: 180,
             formatter: (row, column, cellValue) => {
+                cellValue = row.orderType == 2 ? row.totalPrice : cellValue
                 if (!cellValue && row.orderStatus !== 1) {
                     return '--'
                 }
