@@ -261,6 +261,9 @@ const mainTable = reactive({
                 if (!cellValue && row.orderStatus !== 1) {
                     return '--'
                 }
+                if(row.orderType == 2) {
+                    return row.totalPrice
+                }
                 return cellValue
             },
         },

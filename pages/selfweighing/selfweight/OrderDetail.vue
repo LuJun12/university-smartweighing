@@ -42,7 +42,7 @@
                         </div>
                         <div class="list-all">
                             <div class="left">下单人编号：</div>
-                            <div class="right">{{ detailInfo.info.userNo || '--' }}</div>
+                            <div class="right">{{ detailInfo.info.userId || '--' }}</div>
                         </div>
                         <div class="list-all">
                             <div class="left">下单人：</div>
@@ -81,7 +81,7 @@
                             <el-col :span="12">
                                 <div class="list-all">
                                     <div class="left">付款人编号：</div>
-                                    <div class="right">{{ detailInfo.info.orderStatus === 0 || detailInfo.info.orderStatus === 3 ? '--' : detailInfo.info.payUserNo || '--' }}</div>
+                                    <div class="right">{{ detailInfo.info.orderStatus === 0 || detailInfo.info.orderStatus === 3 ? '--' : detailInfo.info.userId || '--' }}</div>
                                 </div>
                             </el-col>
                             <el-col :span="12">
@@ -133,8 +133,9 @@
                                             <div class="df-one-a">{{ detailInfo.info.allowanceAmount || 0 }}</div>
                                             <div class="df-one-a" v-html="detailInfo.info.actualAmount || '--'"></div>
                                         </div>
-                                    </div>
-                                    <div class="rights">{{ detailInfo.info.amountReceivable || 0 }}</div>
+                                    </div> 
+                                    <div class="rights" v-if="detailInfo.info.orderType == 2">{{ detailInfo.info.totalPrice || 0 }}</div>
+                                    <div class="rights" v-else>{{ detailInfo.info.amountReceivable || 0 }}</div>
                                     <div class="rights">{{ detailInfo.info.actualPrice || 0 }}</div>
                                 </div>
                             </div>
@@ -194,7 +195,7 @@
                         <span>本订单收费方式为</span>
                         <span class="fixed-price-point">按订单收费</span>
                         <span>，订单统一收费</span>
-                        <span class="fixed-price-point">30元</span>
+                        <span class="fixed-price-point">{{detailInfo.info.totalPrice}}元</span>
                     </div>
                     <el-table :data="dataListDish" style="width: 100%; margin-top: 20px" @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="55"></el-table-column>
@@ -278,11 +279,29 @@ const columnsdish = ref([
     // { width: '55px', type: 'selection' },
     { prop: 'itemName', label: '菜品名称', width: '' },
     // { prop: 'itemName', label: '计价方式', width: '' },
-    { prop: 'itemUnitPrice', label: '单价（元/100g）', width: '' },
+    { prop: 'itemUnitPrice', label: '单价（元/100g）', width: '', formatter(row) {
+        if(detailInfo.info.orderType == 2) {
+            return '包含'
+        } else {
+            return row[this.prop]
+        }
+    } },
     // { prop: 'itemName', label: '份量（份）', width: '' },
     { prop: 'itemWeight', label: '重量（g）', width: '' },
-    { prop: 'itemTotalPrice', label: '总价（元）', width: '' },
-    { prop: 'discountedPrice', label: '优惠价（元）', width: '' },
+    { prop: 'itemTotalPrice', label: '总价（元）', width: '', formatter(row, col) {
+        if(detailInfo.info.orderType == 2) {
+            return '包含'
+        } else {
+            return row[this.prop]
+        }
+    } },
+    { prop: 'discountedPrice', label: '优惠价（元）', width: '', formatter(row) {
+        if(detailInfo.info.orderType == 2) {
+            return '包含'
+        } else {
+            return row[this.prop]
+        }
+    } },
     { prop: 'actionTime', label: '最后打餐时间', width: '' },
 ])
 const columnslog = ref([
