@@ -390,7 +390,7 @@ const freshData = () => {
 }
 const refundAgin = async row => {
     mainTable.config.loading = true
-    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', {
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', {
         strategyName: 'pcRefundInfoStrategy',
         orderId: row.orderId,
         refundOrderId: row.refundOrderId,

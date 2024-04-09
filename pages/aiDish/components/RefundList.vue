@@ -165,7 +165,7 @@ const onNosubmit = async () => {
         // refundChannelType:form.refundChannelType,
         refundReasonReply: form.refundReasonReply,
     }
-    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
     if (res.success) {
         submitloading.value = false
         centerDialogVisible.value = false
@@ -207,7 +207,7 @@ const doSubmitFun = async () => {
                 strategyName: 'auditRefund',
                 orderId: orderId.value,
             }
-            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
+            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
             if (res.success) {
                 submitloading.value = false
                 centerDialogVisible.value = false

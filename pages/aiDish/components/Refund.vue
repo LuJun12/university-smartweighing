@@ -183,7 +183,7 @@ const doSubmitFun = async () => {
                     }
                 }),
             }
-            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/confirmRefunds', data)
+            const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
             if (res.success) {
                 submitloading.value = false
                 centerDialogVisible.value = false
