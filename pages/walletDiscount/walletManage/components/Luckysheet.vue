@@ -151,7 +151,7 @@ const checkTable = () => {
         if(Number(celldata[i][1]?.v) > 99999){
             errorList.push({
                 indexSel: i + 1,
-                error: '钱包充值金额过大',
+                error: '钱包充值金额过大，最大为99999',
             })
         }
         if(isNonEmptyValue(celldata[i][2]?.v) && !/^([1-9]\d{0,}|0)(\.\d{1,2})?$/.test(celldata[i][2]?.v)){
@@ -163,7 +163,7 @@ const checkTable = () => {
         if(Number(celldata[i][2]?.v) > 99999){
             errorList.push({
                 indexSel: i + 1,
-                error: '补贴钱包充值金额过大',
+                error: '补贴钱包充值金额过大，最大为99999',
             })
         }
 
