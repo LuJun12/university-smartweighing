@@ -114,16 +114,13 @@ const checkTable = () => {
     let tableList = [],
         errorList = []
     for (let i = 1; i < celldata.length; i++) {
-        if(celldata[i].some(item=>item!==null)){
-            console.log(i+1, celldata[i])
-        }
         if (
             celldata[i].some((item, idx) => {
                 return [0, 1, 2,].includes(idx) && (!item || !item.v)
             })
         ) {
             if (celldata[i].every(item => item === null || !item.v)) continue
-            if (!celldata[i][0]?.v)
+            if (!isNonEmptyValue(celldata[i][0]?.v))
                 errorList.push({
                     indexSel: i + 1,
                     error: '成员Id不能为空',
@@ -139,11 +136,41 @@ const checkTable = () => {
                     error: '补贴钱包充值金额不能为空',
                 })
         }
+        if(celldata[i][0]?.v && !/^\d{1,30}$/.test(celldata[i][0]?.v)){
+            errorList.push({
+                indexSel: i + 1,
+                error: '成员Id类型错误或成员Id长度过长',
+            })
+        }
+        if(isNonEmptyValue(celldata[i][1]?.v) && !/^([1-9]\d{0,}|0)(\.\d{1,2})?$/.test(celldata[i][1]?.v)){
+            errorList.push({
+                indexSel: i + 1,
+                error: '钱包充值金额格式不正确',
+            })
+        }
+        if(Number(celldata[i][1]?.v) > 99999){
+            errorList.push({
+                indexSel: i + 1,
+                error: '钱包充值金额过大',
+            })
+        }
+        if(isNonEmptyValue(celldata[i][2]?.v) && !/^([1-9]\d{0,}|0)(\.\d{1,2})?$/.test(celldata[i][2]?.v)){
+            errorList.push({
+                indexSel: i + 1,
+                error: '补贴钱包充值金额格式不正确',
+            })
+        }
+        if(Number(celldata[i][2]?.v) > 99999){
+            errorList.push({
+                indexSel: i + 1,
+                error: '补贴钱包充值金额过大',
+            })
+        }
 
         if (
             celldata[i].filter((item, idx) => {
                 return [0, 1, 2,].includes(idx) && item !== null && isNonEmptyValue(item.v)
-            }).length === 3
+            }).length === 3 && errorList.length == 0
         ) {
             tableList.push({
                 dinersId: celldata[i][0]?.v,
