@@ -255,7 +255,7 @@ const columnsdish = ref([
     { prop: 'itemName', label: '菜品名称', width: '' },
     // { prop: 'itemName', label: '计价方式', width: '' },
     { prop: 'itemUnitPrice', label: '单价（元）', width: '' },
-    { prop: 'itemUnitPrice', label: '数量', width: '' },
+    { prop: 'specType', label: '数量', width: '' },
     // { prop: 'itemName', label: '份量（份）', width: '' },
     // { prop: 'itemWeight', label: '重量（g）', width: '' },
     { prop: 'itemTotalPrice', label: '总价（元）', width: '' },
