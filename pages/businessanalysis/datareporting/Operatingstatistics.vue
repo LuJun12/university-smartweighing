@@ -634,7 +634,9 @@ onMounted(async() => {
             font-weight: 400;
             color: #000000;
             line-height: 12px;
-            margin-right: 20px;
+            margin-right: 15px;
+            width: 70px;
+            display: inline-block;
         }
         .explain_value {
             height: 12px;
