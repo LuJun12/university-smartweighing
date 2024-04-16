@@ -304,10 +304,22 @@ const orderStatisticsData1 = reactive({
             prop: 'breakfastNum'
         },
         {
+            name: '早上点心',
+            value: 0,
+            color: '#03f526',
+            prop: 'morningNum'
+        },
+        {
             name: '午餐',
             value: 0,
             color: '#6789f7',
             prop: 'lunchNum'
+        },
+        {
+            name: '下午茶',
+            value: 0,
+            color: '#00d1ff',
+            prop: 'afternoonNum'
         },
         {
             name: '晚餐',
@@ -320,18 +332,6 @@ const orderStatisticsData1 = reactive({
             value: 0,
             color: '#7ae98b',
             prop: 'midnightSnackNum'
-        },
-        {
-            name: '下午茶',
-            value: 0,
-            color: '#00d1ff',
-            prop: 'afternoonNum'
-        },
-        {
-            name: '早上点心',
-            value: 0,
-            color: '#03f526',
-            prop: 'morningNum'
         },
     ],
 })
