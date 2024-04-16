@@ -289,27 +289,49 @@ const orderStatisticsData1 = reactive({
         show: false,
         right: 10,
     },
-    color: ['#ec85ce', '#6789f7', '#ede157', '#7ae98b'],
+    color: computed(()=> orderStatisticsData1.data.map(item => item.color)),
     data: [
+        {
+            name: '全餐次',
+            value: 0,
+            color: '#Fb5000',
+            prop: 'fullNum'
+        },
         {
             name: '早餐',
             value: 0,
             color: '#ec85ce',
+            prop: 'breakfastNum'
         },
         {
             name: '午餐',
             value: 0,
             color: '#6789f7',
+            prop: 'lunchNum'
         },
         {
             name: '晚餐',
             value: 0,
             color: '#ede157',
+            prop: 'dinnerNum'
         },
         {
             name: '夜宵',
             value: 0,
             color: '#7ae98b',
+            prop: 'midnightSnackNum'
+        },
+        {
+            name: '下午茶',
+            value: 0,
+            color: '#00d1ff',
+            prop: 'afternoonNum'
+        },
+        {
+            name: '早上点心',
+            value: 0,
+            color: '#03f526',
+            prop: 'morningNum'
         },
     ],
 })
@@ -411,10 +433,9 @@ const getTotalByMonth = async () => {
 
         tatalAllRight.value = (res.data.breakfastNum || 0) + (res.data.dinnerNum || 0) + (res.data.lunchNum || 0) + (res.data.midnightSnackNum || 0)
 
-        orderStatisticsData1.data[0].value = res.data.breakfastNum || 0
-        orderStatisticsData1.data[1].value = res.data.lunchNum || 0
-        orderStatisticsData1.data[2].value = res.data.dinnerNum || 0
-        orderStatisticsData1.data[3].value = res.data.midnightSnackNum || 0
+        orderStatisticsData1.data.forEach(item => {
+            item.value = res.data[item.prop] || 0
+        })
         stepData.value.xList = res.data.operatingStatisticsVoList.map(v => dayjs(v.mealDate).format('MM-DD') + v.weeks)
         stepData.value.series[0].data = res.data.operatingStatisticsVoList.map(v => v.totalRevenue)
         stepData.value.series[1].data = res.data.operatingStatisticsVoList.map(v => v.totalOrderNum)
