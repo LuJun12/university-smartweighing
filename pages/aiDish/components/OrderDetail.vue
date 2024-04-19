@@ -192,7 +192,9 @@
                 <el-tab-pane label="菜品信息" name="first">
                     <el-table :data="dataListDish" style="width: 100%; margin-top: 20px" @selection-change="handleSelectionChange">
                         <el-table-column type="selection" width="55"></el-table-column>
-                        <el-table-column v-for="(item, index) in columnsdish" :prop="item.prop" :key="index" :label="item.label" :width="item.width" :type="item.type"></el-table-column>
+                        <el-table-column v-for="(item, index) in columnsdish" :prop="item.prop" :key="index" :label="item.label" :width="item.width" :type="item.type">
+                            <template #default="scope">{{ scope.row[item.prop] || '--' }}</template>
+                        </el-table-column>
                     </el-table>
                 </el-tab-pane>
                 <el-tab-pane label="退款信息" name="third" v-if="detailInfo.info.orderStatus === 1">
@@ -200,9 +202,12 @@
                         <el-table-column v-for="(item, index) in columnstk" :prop="item.prop" :key="index" :label="item.label" :width="item.width">
                             <template #default="scope">
                                 <template v-if="item.formatter">
-                                    <span>{{ scope.row.refundReason || '--' }}</span>
-                                    <br />
-                                    <span>{{ scope.row.refundReasonReply || '--' }}</span>
+                                    <span v-if="!scope.row.refundReasonReply && !scope.row.refundReason">{{ scope.row.refundReason || '--' }}</span>
+                                    <div v-else-if="scope.row.refundReason">
+                                        <span>{{ scope.row.refundReason}}</span>
+                                        <br />
+                                    </div>
+                                    <span v-else-if="scope.row.refundReasonReply">{{ scope.row.refundReasonReply }}</span>
                                 </template>
                                 <span v-else>{{ scope.row[item.prop] || '--' }}</span>
                             </template>

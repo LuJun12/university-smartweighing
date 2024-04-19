@@ -74,7 +74,7 @@ const searchConditionForm = reactive({
     // 表单项配置
     items: [
         {
-            label: '退款编号',
+            label: '退款单号',
             prop: 'refundNo',
         },
         {
@@ -279,7 +279,7 @@ const mainTable = reactive({
             formatter: (row, column, cellValue) => {
                 return (
                     <span>
-                        {row.refundReason || '--'}
+                        {row.refundReason}
                         <br />
                         {row.refundReasonReply || '--'}
                     </span>

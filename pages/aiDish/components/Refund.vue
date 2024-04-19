@@ -219,6 +219,7 @@ const dialogRow = ref([])
 const open = row => {
     detailId.value = row.dialogId
     dialogRow.value = row.dialogRow
+    dialogRow
     if (detailId.value) {
         form.refundChannelType = 1
         form.refundAmount = ''
