@@ -179,7 +179,7 @@ const doSubmitFun = async () => {
                 strategyName: 'sysUserWalletRefundStrategy',
                 refundOrderDetailList: dialogRow.value.map(v => {
                     return {
-                        refundDishId: v.dishId,
+                        dishId: v.dishId,
                     }
                 }),
             }
