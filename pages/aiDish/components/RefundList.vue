@@ -205,7 +205,12 @@ const doSubmitFun = async () => {
                 refundMethodType: 2,
                 refundOrderId: detailId.value,
                 // userId: $storage.get('userInfo')?.userId,
-                strategyName: 'auditRefund',
+                strategyName: 'sysUserWalletAuditAgreeRefundStrategy',
+                refundOrderDetailList:tableNew.value.map(v=>{
+                    return {
+                        dishId:v.dishId,
+                    }
+                }),
                 orderId: orderId.value,
             }
             const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
