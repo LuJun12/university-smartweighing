@@ -136,6 +136,7 @@ const getmealSmartOrderorderRefundDetail = async () => {
     const params = {
         refundOrderId: detailId.value,
         strategyName: 'pcRefundAuditInfoStrategy',
+        orderId: orderId.value,
     }
     const res = await api.visualSettlementBase.post('/visual-settlement-base/order/orderRefund/detail', params)
     if (res.success) {
@@ -242,6 +243,7 @@ const dialogRow = ref([])
 
 const open = row => {
     detailId.value = row.dialogId
+    orderId.value = row.orderId
     // dialogRow.value = row.dialogRow
     if (detailId.value) {
         form.refundChannelType = 1

@@ -333,6 +333,7 @@ const mainTable = reactive({
                     click: row => {
                         refundRef.value.open({
                             dialogId: row.refundOrderId,
+                            orderId: row.orderId
                         })
                     },
                 },
