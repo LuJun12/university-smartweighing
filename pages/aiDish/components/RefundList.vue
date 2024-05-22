@@ -153,9 +153,14 @@ const getmealSmartOrderorderRefundDetail = async () => {
     }
 }
 const onNosubmit = async () => {
+    if (form.refundAmount == 0) {
+        $message.error('退款金额需大于0')
+        return
+    }
     submitloading.value = true
     let data = {}
     data = {
+        refundAmount:form.refundAmount,
         // ...form,
         organizationId: $storage.get('userInfo')?.organizationId,
         refundMethodType: 2,
