@@ -161,7 +161,7 @@ const onNosubmit = async () => {
         refundMethodType: 2,
         refundOrderId: detailId.value,
         // userId: $storage.get('userInfo')?.userId,
-        strategyName: 'pcRefundInfoStrategy',
+        strategyName: 'auditRefuseRefundStrategy',
         orderId: orderId.value,
         // refundChannelType:form.refundChannelType,
         refundReasonReply: form.refundReasonReply,
