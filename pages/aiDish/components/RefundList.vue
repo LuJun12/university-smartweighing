@@ -170,6 +170,11 @@ const onNosubmit = async () => {
         orderId: orderId.value,
         refundChannelType:form.refundChannelType,
         refundReasonReply: form.refundReasonReply,
+        refundOrderDetailList:tableNew.value.map(v=>{
+            return {
+                dishId:v.dishId,
+            }
+        }),
     }
     const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
     if (res.success) {
