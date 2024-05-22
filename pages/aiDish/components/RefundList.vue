@@ -163,7 +163,7 @@ const onNosubmit = async () => {
         // userId: $storage.get('userInfo')?.userId,
         strategyName: 'auditRefuseRefundStrategy',
         orderId: orderId.value,
-        // refundChannelType:form.refundChannelType,
+        refundChannelType:form.refundChannelType,
         refundReasonReply: form.refundReasonReply,
     }
     const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', data)
