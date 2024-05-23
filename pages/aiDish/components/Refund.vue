@@ -30,6 +30,9 @@
                             <el-form-item label="退款金额：" prop="refundAmount">
                                 <el-input size="mini" v-model.trim="form.refundAmount" @input="onDishVerifyNumberIntegerAndFloat($event, 'refundAmount')" style="width: 200px"></el-input>
                             </el-form-item>
+                            <el-form-item label="退款原因：" prop="refundReason">
+                                <el-input size="mini" rows="3" type="textarea" placeholder="请输入退款原因" v-model.trim="form.refundReason" style="width: 200px"></el-input>
+                            </el-form-item>
                         </el-col>
                         <el-col :span="12" v-if="counterVisible">
                             <div class="sd-title">退款金额计算器</div>
@@ -110,10 +113,12 @@ const newAllprice = computed(() => {
 const form = reactive({
     refundChannelType: 1,
     refundAmount: '',
+    refundReason:''
 })
 const sendId = ref('')
 const rules = reactive({
     refundAmount: [{ required: true, message: `请输入`, trigger: ['blur'] }],
+    refundReason: [{ required: true, message: `请输入`, trigger: ['blur'] }],
 })
 
 const detailInfo = ref({})

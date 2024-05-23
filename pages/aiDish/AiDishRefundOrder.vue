@@ -18,7 +18,20 @@
                     :table-config="mainTable.config"
                     :table-columns="mainTable.columns"
                     :table-pagination="mainTable.pagination"
-                />
+                >
+                    <template #slotImages="scope">
+                        <el-image
+                            v-if="scope.row.refundImages?.length"
+                            class="yq-w-48 yq-h-36 yq-ml-4"
+                            :src="imgSrcFilter(scope.row.refundImages[0])"
+                            fit="cover"
+                            :preview-src-list="imgArrPreviewFilter(scope.row.refundImages)"
+                            :initial-index="0"
+                            preview-teleported
+                        />
+                        <span v-else>--</span>
+                    </template>
+                </ElPlusTable>
             </div>
             <refund-dilog ref="refundRef" :detailId="dialogId" :dialogRow="dialogRow" @fresh-data="freshData"></refund-dilog>
         </div>
@@ -30,6 +43,7 @@
 import { ref, reactive, inject, onMounted } from 'vue'
 import RefundDilog from './components/RefundList.vue'
 import api from '@smartweighing/api'
+import { imgSrcFilter, imgArrPreviewFilter } from '@/tools/toolsValidate'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -118,8 +132,8 @@ const searchConditionForm = reactive({
             ],
         },
         {
-            label: '付款方式',
-            prop: 'paymentMethod',
+            label: '退款方式',
+            prop: 'refundMethodType',
             type: 'el-select',
             options: [
                 {
@@ -127,17 +141,17 @@ const searchConditionForm = reactive({
                     value: '',
                 },
                 {
-                    label: '钱包余额',
-                    value: '1',
+                    label: '申请退款',
+                    value: 1,
                 },
                 {
-                    label: '补贴钱包余额',
-                    value: '2',
+                    label: '后台退款',
+                    value: 2,
                 },
-                {
-                    label: '微信',
-                    value: '6',
-                },
+                // {
+                //     label: '微信',
+                //     value: '6',
+                // },
                 // {
                 //     label: '组合',
                 //     value: '3',
@@ -316,6 +330,13 @@ const mainTable = reactive({
                     return <span>--</span>
                 }
             },
+        },
+        {
+            label: '照片',
+            type: 'slot',
+            slotName: 'slotImages',
+            className: 'column-flex-center',
+            minWidth: 200,
         },
         {
             label: '操作',
