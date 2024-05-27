@@ -120,10 +120,10 @@ const searchConditionForm = reactive({
                     label: '申请中',
                     value: 0,
                 },
-                // {
-                //     label: '部分退款',
-                //     value: 2,
-                // },
+                {
+                    label: '部分退款',
+                    value: 2,
+                },
                 // {
                 //     label: '退款中',
                 //     value: 1,
