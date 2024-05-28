@@ -43,7 +43,7 @@
 import { ref, reactive, inject, onMounted } from 'vue'
 import RefundDilog from './components/RefundList.vue'
 import api from '@smartweighing/api'
-import { imgSrcFilter, imgArrPreviewFilter } from '@/tools/toolsValidate'
+import { imgSrcFilter, imgArrPreviewFilter } from '@kitchen/pages/cookManage/dataUtils'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
