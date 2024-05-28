@@ -20,15 +20,18 @@
                     :table-pagination="mainTable.pagination"
                 >
                     <template #slotImages="scope">
-                        <el-image
-                            v-if="scope.row.refundImages?.length"
-                            class="yq-w-48 yq-h-36 yq-ml-4"
-                            :src="imgSrcFilter(scope.row.refundImages[0])"
-                            fit="cover"
-                            :preview-src-list="imgArrPreviewFilter(scope.row.refundImages)"
-                            :initial-index="0"
-                            preview-teleported
-                        />
+                        <div v-if="scope.row.refundImages?.length">
+                            <el-image
+                                v-for="(item,index) in scope.row.refundImages"
+                                :key="index"
+                                class="yq-w-48 yq-h-36 yq-ml-4"
+                                :src="imgSrcFilter(item)"
+                                fit="cover"
+                                :preview-src-list="imgArrPreviewFilter(scope.row.refundImages)"
+                                :initial-index="index"
+                                preview-teleported
+                            />
+                        </div>
                         <span v-else>--</span>
                     </template>
                 </ElPlusTable>
