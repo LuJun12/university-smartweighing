@@ -259,6 +259,11 @@ const mainTable = reactive({
             minWidth: 100,
         },
         {
+            label: '来源',
+            prop: 'moneySourceName',
+            minWidth: 100,
+        },
+        {
             label: '类型',
             prop: 'flowType',
             minWidth: 80,
