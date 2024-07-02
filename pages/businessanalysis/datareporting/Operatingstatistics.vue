@@ -5,7 +5,7 @@
                 <div class="search_box" style="margin-top: 24px">
                     <div class="search_item">
                         <span>统计范围：</span>
-                        <el-select v-model="organizationId" clearable style="width: 200px" placeholder="请选择" @change="clickHandle">
+                        <el-select v-model="organizationId" style="width: 200px" placeholder="请选择" @change="clickHandle">
                             <el-option v-for="item in cateOptions" :key="item.value" :label="item.lable" :value="item.value" />
                         </el-select>
                     </div>
