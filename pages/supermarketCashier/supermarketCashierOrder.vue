@@ -85,6 +85,10 @@ const searchConditionForm = reactive({
     // 表单项配置
     items: [
         {
+            label: '超市名称',
+            prop: 'supermarketName',
+        },
+        {
             label: '订单编号',
             prop: 'orderNo',
         },
@@ -226,6 +230,11 @@ const mainTable = reactive({
     },
     // 字段配置
     columns: [
+        {
+            label: '超市名称',
+            prop: 'supermarketName',
+            minWidth: 200,
+        },
         {
             label: '订单编号',
             prop: 'orderNo',
