@@ -344,7 +344,7 @@ const mainTable = reactive({
         const res = await api.visualSettlementBase.post('/visual-settlement-base/order/list/canteen', {
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
-            orderType:1,
+            orderType:2,
             pageSize: mainTable.pagination.pageSize,
             orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
             orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',

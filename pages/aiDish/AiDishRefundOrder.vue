@@ -36,7 +36,7 @@
                     </template>
                 </ElPlusTable>
             </div>
-            <refund-dilog ref="refundRef" :detailId="dialogId" :dialogRow="dialogRow" @fresh-data="freshData"></refund-dilog>
+            <refund-dilog ref="refundRef" :detail-id="dialogId" :dialog-row="dialogRow" @fresh-data="freshData" />
         </div>
     </FakeRouterView>
 </template>
@@ -131,7 +131,7 @@ const searchConditionForm = reactive({
                 //     label: '退款中',
                 //     value: 1,
                 // },
-               
+
             ],
         },
         {
@@ -398,6 +398,7 @@ const mainTable = reactive({
         const res = await api.visualSettlementBase.post('/visual-settlement-base/order/orderRefund/list', {
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
+            orderType:1,
             pageSize: mainTable.pagination.pageSize,
             // 组织（接口必须，这里传一个固定值）
             organizationId: $storage.get('userInfo')?.organizationId,
