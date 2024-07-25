@@ -85,6 +85,10 @@ const searchConditionForm = reactive({
     // 表单项配置
     items: [
         {
+            label: '超市名称',
+            prop: 'supermarketName',
+        },
+        {
             label: '订单编号',
             prop: 'orderNo',
         },
@@ -227,6 +231,11 @@ const mainTable = reactive({
     // 字段配置
     columns: [
         {
+            label: '超市名称',
+            prop: 'supermarketName',
+            minWidth: 200,
+        },
+        {
             label: '订单编号',
             prop: 'orderNo',
             minWidth: 200,
@@ -344,7 +353,7 @@ const mainTable = reactive({
         const res = await api.visualSettlementBase.post('/visual-settlement-base/order/list/canteen', {
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
-            orderType:1,
+            orderType:2,
             pageSize: mainTable.pagination.pageSize,
             orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
             orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',

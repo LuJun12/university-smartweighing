@@ -18,20 +18,35 @@
                     :table-config="mainTable.config"
                     :table-columns="mainTable.columns"
                     :table-pagination="mainTable.pagination"
-                />
+                >
+                    <template #slotImages="scope">
+                        <div v-if="scope.row.refundImages?.length">
+                            <el-image
+                                v-for="(item,index) in scope.row.refundImages"
+                                :key="index"
+                                class="yq-w-48 yq-h-36 yq-ml-4"
+                                :src="imgSrcFilter(item)"
+                                fit="cover"
+                                :preview-src-list="imgArrPreviewFilter(scope.row.refundImages)"
+                                :initial-index="index"
+                                preview-teleported
+                            />
+                        </div>
+                        <span v-else>--</span>
+                    </template>
+                </ElPlusTable>
             </div>
+            <refund-dilog ref="refundRef" :detail-id="dialogId" :dialog-row="dialogRow" @fresh-data="freshData" />
         </div>
-        <template #OrderDetail>
-            <OrderDetail v-bind="fakeRouterViewConfig.OrderDetail.props" @success="mainTable.getData" />
-        </template>
     </FakeRouterView>
 </template>
 
 <script setup lang="jsx">
 /* --------------------- 引用 --------------------- */
 import { ref, reactive, inject, onMounted } from 'vue'
-import OrderDetail from './components/OrderDetail.vue'
+import RefundDilog from './components/RefundList.vue'
 import api from '@smartweighing/api'
+import { imgSrcFilter, imgArrPreviewFilter } from '@kitchen/pages/cookManage/dataUtils'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -42,22 +57,13 @@ const $fakeRouter = inject('$fakeRouter')
 const $storage = inject('$storage')
 
 /* ------------------- 查询条件 -------------------- */
-const fakeRouterViewConfig = reactive({
-    OrderDetail: {
-        // 显隐方式
-        hiddenType: 'vIf',
-        // 视图属性
-        props: {},
-    },
-})
 
 const searchConditionFormRef = ref()
 const searchConditionForm = reactive({
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     model: {
-        orderTime: [],
-        orderStatus: '',
-        paymentMethod: '',
+        refundMethodType: '',
+        refundStatus: '',
     },
     // 表单配置
     config: {
@@ -85,16 +91,20 @@ const searchConditionForm = reactive({
     // 表单项配置
     items: [
         {
+            label: '退款单号',
+            prop: 'refundNo',
+        },
+        {
             label: '订单编号',
             prop: 'orderNo',
         },
         {
             label: '下单人',
-            prop: 'userName',
+            prop: 'dinnerName',
         },
         {
-            label: '订单状态',
-            prop: 'orderStatus',
+            label: '退款状态',
+            prop: 'refundStatus',
             type: 'el-select',
             options: [
                 {
@@ -102,30 +112,31 @@ const searchConditionForm = reactive({
                     value: '',
                 },
                 {
-                    label: '未支付',
+                    label: '退款成功',
+                    value: 3,
+                },
+                {
+                    label: '退款失败',
+                    value: 4,
+                },
+                {
+                    label: '申请中',
                     value: 0,
                 },
                 {
-                    label: '已完成',
-                    value: 1,
+                    label: '部分退款',
+                    value: 2,
                 },
                 // {
-                //     label: '支付失败',
-                //     value: 2,
+                //     label: '退款中',
+                //     value: 1,
                 // },
-                // {
-                //     label: '挂账待付',
-                //     value: 3,
-                // },
-                {
-                    label: '已取消',
-                    value: 4,
-                },
+
             ],
         },
         {
-            label: '付款方式',
-            prop: 'paymentMethod',
+            label: '退款方式',
+            prop: 'refundMethodType',
             type: 'el-select',
             options: [
                 {
@@ -133,17 +144,17 @@ const searchConditionForm = reactive({
                     value: '',
                 },
                 {
-                    label: '钱包余额',
-                    value: '1',
+                    label: '申请退款',
+                    value: 1,
                 },
                 {
-                    label: '补贴钱包余额',
-                    value: '2',
+                    label: '后台退款',
+                    value: 2,
                 },
-                {
-                    label: '微信',
-                    value: '6',
-                },
+                // {
+                //     label: '微信',
+                //     value: '6',
+                // },
                 // {
                 //     label: '组合',
                 //     value: '3',
@@ -157,16 +168,6 @@ const searchConditionForm = reactive({
                 //     value: '5',
                 // },
             ],
-        },
-        {
-            label: '下单时间',
-            prop: 'orderTime',
-            type: 'el-date-picker',
-            props: {
-                type: 'datetimerange',
-                style: 'max-width: 364px; width: auto;',
-                defaultTime: [new Date(2000, 1, 1, 0, 0, 0), new Date(2000, 1, 1, 23, 59, 59)],
-            },
         },
         {
             // 类型为渲染函数
@@ -185,7 +186,7 @@ const searchConditionForm = reactive({
     reset: () => {
         searchConditionFormRef.value.resetFields()
         mainTable.pagination.page = 1
-        mainTable.pagination.pageSize = 10
+        mainTable.pagination.pageSize = 20
         mainTable.getData()
     },
 })
@@ -217,7 +218,7 @@ const mainTable = reactive({
             showOverflowTooltip: true,
             // 默认格式化器
             formatter: (row, column, cellValue) => {
-                if (!cellValue) {
+                if (!cellValue && cellValue !== 0) {
                     return '--'
                 }
                 return cellValue
@@ -227,78 +228,118 @@ const mainTable = reactive({
     // 字段配置
     columns: [
         {
-            label: '订单编号',
+            label: '退款单号',
+            prop: 'refundNo',
+            minWidth: 200,
+        },
+        {
+            label: '相关订单',
             prop: 'orderNo',
             minWidth: 200,
         },
         {
-            label: '订单状态',
-            prop: 'orderStatusName',
-            minWidth: 90,
+            label: '相关账单',
+            prop: 'revokeOrder',
+            minWidth: 240,
+            formatter: (row, column, cellValue) => {
+                if (!row.revokeOrder) {
+                    return '无'
+                }
+                if (row.revokeOrder.revokeNumber && row.revokeOrder.payNumber) {
+                    return (
+                        <span>
+                            [{row.revokeOrder.revokeState == 1 ? '成功' : '失败'}]整单退款:{row.revokeOrder.revokeNumber}
+                            <br />[{row.revokeOrder.payState == 1 ? '成功' : '失败'}]重新支付:{row.revokeOrder.payNumber}
+                        </span>
+                    )
+                }
+                if (row.revokeOrder.revokeNumber) {
+                    return (
+                        <span>
+                            [{row.revokeOrder.revokeState == 1 ? '成功' : '失败'}]整单退款:{row.revokeOrder.revokeNumber}
+                        </span>
+                    )
+                }
+                if (row.revokeOrder.payNumber) {
+                    return (
+                        <span>
+                            [{row.revokeOrder.payState == 1 ? '成功' : '失败'}]重新支付:{row.revokeOrder.payNumber}
+                        </span>
+                    )
+                }
+            },
         },
         {
-            label: '订单详情',
-            prop: 'itemNames',
+            label: '状态',
+            prop: 'refundStatusName',
             minWidth: 150,
         },
         {
-            label: '订单总价（元）',
-            prop: 'totalPrice',
-            minWidth: 200,
-            formatter: (row, column, cellValue) => {
-                if (!cellValue && row.orderStatus !== 1) {
-                    return '--'
-                }
-                return cellValue
-            },
-        },
-        {
-            label: '订单应收（元）',
-            prop: 'amountReceivable',
-            width: 180,
-            formatter: (row, column, cellValue) => {
-                if (!cellValue && row.orderStatus !== 1) {
-                    return '--'
-                }
-                return cellValue
-            },
-        },
-        {
-            label: '订单实收（元）',
-            prop: 'actualPrice',
-            width: 180,
-            formatter: (row, column, cellValue) => {
-                if (!cellValue && row.orderStatus !== 1) {
-                    return '--'
-                }
-                return cellValue
-            },
-        },
-        {
-            label: '付款方式',
-            prop: 'paymentMethod',
-            width: 180,
-        },
-        {
             label: '下单人',
-            prop: 'userName',
+            prop: 'dinnerName',
+            minWidth: 200,
+        },
+        {
+            label: '退款方式',
+            prop: 'refundMethod',
             width: 180,
         },
         {
-            label: '下单时间',
-            prop: 'orderTime',
+            label: '退款内容',
+            prop: 'refundItemNames',
             width: 180,
         },
         {
-            label: '付款时间',
-            prop: 'paymentTime',
+            label: '原因及回复',
+            prop: 'refundReasonReply',
             width: 180,
             formatter: (row, column, cellValue) => {
-                if (!cellValue || row.orderStatus === 3) {
-                    return '--'
-                }
-                return cellValue
+                return (
+                    <span>
+                        {row.refundReason}
+                        <br />
+                        {row.refundReasonReply || '--'}
+                    </span>
+                )
             },
+        },
+        {
+            label: '退款总额（元）',
+            prop: 'refundedTotalAmount',
+            width: 180,
+        },
+        {
+            label: '操作人员',
+            prop: 'operatorName',
+            width: 180,
+        },
+        {
+            label: '退款渠道',
+            prop: 'refundChannel',
+            width: 180,
+        },
+        {
+            label: '退款时间',
+            prop: 'operateTime',
+            width: 200,
+            formatter: (row, column, cellValue) => {
+                if (row.refundStatus == 0) {
+                    return <span>{row.operateTime}申请</span>
+                } else if (row.refundStatus == 3 || row.refundStatus == 2) {
+                    return <span>{row.operateTime}退款</span>
+                } else if (row.refundStatus == 4) {
+                    return <span>{row.operateTime}失败</span>
+                } else {
+                    return <span>--</span>
+                }
+            },
+        },
+        {
+            label: '照片',
+            type: 'slot',
+            slotName: 'slotImages',
+            className: 'column-flex-center',
+            minWidth: 200,
         },
         {
             label: '操作',
@@ -307,15 +348,28 @@ const mainTable = reactive({
             fixed: 'right',
             buttons: [
                 {
-                    label: '管理',
+                    label: '审核',
                     type: 'primary',
                     link: true,
+                    show: row => {
+                        return row.refundStatus === 0 ? true : false
+                    },
                     click: row => {
-                        fakeRouterViewConfig.OrderDetail.props.id = row.id
-                        $fakeRouter.go('OrderDetail', '订单详情', {
-                            id: row.id,
-                            readonlyMode: true,
+                        refundRef.value.open({
+                            dialogId: row.refundOrderId,
+                            orderId: row.orderId
                         })
+                    },
+                },
+                {
+                    label: '再次退款',
+                    type: 'primary',
+                    link: true,
+                    show: row => {
+                        return row.refundStatus === 1 ? true : false
+                    },
+                    click: row => {
+                        refundAgin(row)
                     },
                 },
             ],
@@ -341,13 +395,12 @@ const mainTable = reactive({
             mainTable.pagination.page = pageNumber
         }
         mainTable.config.loading = true
-        const res = await api.visualSettlementBase.post('/visual-settlement-base/order/list/canteen', {
+        const res = await api.visualSettlementBase.post('/visual-settlement-base/order/orderRefund/list', {
             ...searchConditionForm.model,
             page: mainTable.pagination.page,
-            orderType:1,
+            orderType:2,
             pageSize: mainTable.pagination.pageSize,
-            orderBeginTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[0] : '',
-            orderEndTime: searchConditionForm.model.orderTime && searchConditionForm.model.orderTime.length ? searchConditionForm.model.orderTime[1] : '',
+            // 组织（接口必须，这里传一个固定值）
             organizationId: $storage.get('userInfo')?.organizationId,
         })
         mainTable.config.loading = false
@@ -357,6 +410,25 @@ const mainTable = reactive({
         }
     },
 })
+const dialogId = ref('')
+const freshData = () => {
+    mainTable.getData()
+}
+const refundAgin = async row => {
+    mainTable.config.loading = true
+    const res = await api.visualSettlementBase.post('/visual-settlement-base/order/open/sign/confirmRefunds', {
+        strategyName: 'pcRefundInfoStrategy',
+        orderId: row.orderId,
+        refundOrderId: row.refundOrderId,
+        // 组织（接口必须，这里传一个固定值）
+        organizationId: $storage.get('userInfo')?.organizationId,
+    })
+    mainTable.config.loading = false
+    if (res.success) {
+        mainTable.getData()
+    }
+}
+const refundRef = ref(null)
 
 /* ------------------- 生命周期 -------------------- */
 onMounted(() => {
