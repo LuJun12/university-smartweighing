@@ -26,6 +26,14 @@ export default [
             menuRouteName: 'walletManageWalletflow',
         },
     },
-
+    {
+        path: '/walletManage/RechargeTask',
+        name: 'walletManageRechargeTask',
+        component: () => import('./walletManage/RechargeTask.vue'),
+        meta: {
+            title: '充值任务',
+            menuRouteName: 'walletManageRechargeTask',
+        },
+    },
     // 勿删此注释__ROUTES__勿删此注释
 ]

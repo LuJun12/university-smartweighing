@@ -107,6 +107,7 @@
                 @success="mainTable.getData(1)"
             />
         </template>
+        <DialogClearRulesConfig v-model="dialogClearRulesConfig.visible" />
     </FakeRouterView>
 </template>
 
@@ -117,6 +118,7 @@ import ElPlusFormDialog from '@/components/ElPlusFormDialog.vue'
 import api from '@smartweighing/api'
 import FakeRouterView from '@/components/FakeRouterView.vue'
 import ImportData from './ImportData.vue'
+import DialogClearRulesConfig from './components/DialogClearRulesConfig.vue'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -281,10 +283,14 @@ const mainTable = reactive({
     toolbar: {
         title: '钱包信息',
         render: scope => {
-            return <el-button type="primary" onClick={()=> {
-                $fakeRouter.go('importData', '导入充值', {
-                })
-            }}>导入充值</el-button>
+            return <>
+                <el-button type="primary" onClick={()=> {
+                    dialogClearRulesConfig.open()
+                }}>补贴清零规则配置</el-button>
+                <el-button type="primary" onClick={()=> {
+                    $fakeRouter.go('importData', '导入充值', {})
+                }}>导入充值</el-button>
+            </>
         },
     },
     // 表格数据
@@ -667,10 +673,21 @@ const moneyInput = v => {
         }
     }
 }
+
+/* ----------- 补贴清零规则配置 ----------- */
+const dialogClearRulesConfig = reactive({
+    visible: false,
+    open() {
+        dialogClearRulesConfig.visible = true
+    }
+})
+
 // 成员类型
 const personTypeList = ref([])
 const getPersonTypeList = async () => {
-    const res = await api.manage.post('/busi/company/person/selectPersonTypeList', {})
+    const topOrganizationId = $storage.get('topInfo')?.topId || ''
+    const params = { disabledStatus: '1', organizationId: topOrganizationId }
+    const res = await api.manage.post('/busi/company/person/getAppointPersonType', params)
     if (res.success) {
         personTypeList.value = res.data
     }
