@@ -58,7 +58,7 @@ const mainForm = reactive({
 
     model: {
         type: 1,
-        organizationId: [],
+        organizationId: [organizationId],
     },
     rules: {
         type: { required: true, message: '请选择发放方式' },
@@ -90,7 +90,9 @@ const mainForm = reactive({
                     <el-table data={peopleState.selectedList} border style={{ width: '100%', height: 'calc(100vh - 660px)' }}>
                         <el-table-column prop="userName" min-width="25%" align="center" label="姓名"></el-table-column>
                         <el-table-column prop="userTypeName" min-width="25%" align="center" label="类型">
-                           
+                            {{
+                                default: scope => <span>{scope.row.userTypeName || '--'}</span>,
+                            }}
                         </el-table-column>
                         <el-table-column prop="organizationName" min-width="25%" align="center" label="所属组织"></el-table-column>
                         <el-table-column align="center" min-width="25%" label="操作">
@@ -270,7 +272,7 @@ const setForm = () => {
     }
     if (form.type == 2) {
         const scopeList = form.scopeList.map(v => {
-            return { id: v.dinersId, userName: v.dinersName, userType: v.userType, organizationName: v.applyOrganizationName }
+            return { id: v.dinersId, userName: v.dinersName, userType: v.userType, userTypeName: v.userTypeName, organizationName: v.applyOrganizationName }
         })
         peopleState.selectedList = scopeList
     }
