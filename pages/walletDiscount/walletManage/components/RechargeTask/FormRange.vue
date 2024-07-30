@@ -278,15 +278,11 @@ const setForm = () => {
     }
 }
 
-const init = () => {
-    getMemberTypeList()
-    getTagList()
-    getOrgTreeList()
+const init = async () => {
+    await Promise.all([getMemberTypeList(), getTagList(), getOrgTreeList()])
 }
 
-init()
-
-defineExpose({ validate, getForm, setForm })
+defineExpose({ validate, getForm, setForm, init })
 </script>
 
 <style lang="scss" scoped>

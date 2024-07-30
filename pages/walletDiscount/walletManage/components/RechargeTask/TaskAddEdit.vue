@@ -126,18 +126,20 @@ const handleConfirm = async () => {
 }
 
 onMounted(async () => {
-    if (!props.id) return
-    // 编辑回显
     state.loading = true
-    const res = await api.common.post('/walletrecharge/walletRechargeJob/selectOne', { id: props.id })
-    state.loading = false
-    if (res.success) {
-        state.form = res.data
-        await nextTick()
-        refFormBaseInfo.value.setForm()
-        refFormRange.value.setForm()
-        refFormAmount.value.setForm()
+    await refFormRange.value.init()
+    if (props.id) {
+        // 编辑回显
+        const res = await api.common.post('/walletrecharge/walletRechargeJob/selectOne', { id: props.id })
+        if (res.success) {
+            state.form = res.data
+            await nextTick()
+            refFormBaseInfo.value.setForm()
+            refFormRange.value.setForm()
+            refFormAmount.value.setForm()
+        }
     }
+    state.loading = false
 })
 </script>
 
