@@ -115,8 +115,8 @@ const getForm = () => {
 
 const setForm = () => {
     const { form } = props
-    mainForm.model.amount = form.amount
-    mainForm.model.allowanceAmount = form.allowanceAmount
+    mainForm.model.amount = form.amount || ''
+    mainForm.model.allowanceAmount = form.allowanceAmount || ''
 }
 
 defineExpose({ validate, getForm, setForm })

@@ -425,7 +425,7 @@ const mainTable = reactive({
         },
         {
             label: '标签',
-            prop: 'labelList',
+            prop: 'labelIdList',
             minWidth: 120,
             formatter(...args){
                 return args[2]?.length ? args[2].map(item => item.labelName).join() : '--'
@@ -461,9 +461,8 @@ const mainTable = reactive({
 
         mainTable.config.loading = true
 
-        const res = await api.common.post('/canteen/sysUserDiners/pageList', {
+        const res = await api.common.post('/canteen/sysUserDiners/pageListNew', {
             ...searchConditionForm.model,
-            // id: props.roleId,
             pageNo: mainTable.pagination.page,
             pageSize: mainTable.pagination.pageSize,
             organizationId: $storage.get('userInfo')?.organizationId,
