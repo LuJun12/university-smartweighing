@@ -544,8 +544,6 @@ getPersonTypeList()
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 40px;
-    margin-bottom: 5px;
-    padding: 0 20px;
+    padding: 10px 20px;
 }
 </style>
