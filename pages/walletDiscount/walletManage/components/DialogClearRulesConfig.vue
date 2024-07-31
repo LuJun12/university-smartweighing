@@ -81,10 +81,10 @@ const mainDialog = reactive({
         const params = { organizationId: maxOrgId }
         const res = await api.common.post('/dinerswallet/userAllowanceWalletClearConfig/getConfig', params)
         mainDialog.loading = false
+        mainForm2.model.cycle = 4
+        mainForm2.model.exeDate = dayjs().add(1, 'day').format('D')
         if (res.success && res.data) {
             mainForm.model.clearStatus = res.data.clearStatus
-            mainForm2.model.cycle = 4
-            mainForm2.model.exeDate = dayjs().add(1, 'day').format('D')
             if (res.data.clearStatus == 1) {
                 mainForm2.model.cycle = res.data.cycle
                 mainForm2.model.exeDate = res.data.exeDate
