@@ -37,22 +37,22 @@ const mainForm = reactive({
         allowanceAmount: '0',
     },
     rules: {
-        // amount: {
-        //     validator: (_rule, val, callback) => {
-        //         if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
-        //             return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
-        //         }
-        //         callback()
-        //     },
-        // },
-        // allowanceAmount: {
-        //     validator: (_rule, val, callback) => {
-        //         if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
-        //             return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
-        //         }
-        //         callback()
-        //     },
-        // },
+        amount: {
+            validator: (_rule, val, callback) => {
+                if (!Number(mainForm.model.amount) && !Number(mainForm.model.allowanceAmount)) {
+                    return callback(new Error('请至少给一个钱包充值金额'))
+                }
+                callback()
+            },
+        },
+        allowanceAmount: {
+            validator: (_rule, val, callback) => {
+                if (!Number(mainForm.model.amount) && !Number(mainForm.model.allowanceAmount)) {
+                    return callback(new Error('请至少给一个钱包充值金额'))
+                }
+                callback()
+            },
+        },
     },
     items: [
         {
