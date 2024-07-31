@@ -125,7 +125,7 @@ const mainTable = reactive({
             minWidth: 100,
         },
         {
-            label: '所属组织',
+            label: '创建组织',
             prop: 'organizationName',
             minWidth: 180,
         },
