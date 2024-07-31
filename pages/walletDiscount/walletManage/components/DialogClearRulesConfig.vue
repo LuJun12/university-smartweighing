@@ -32,6 +32,7 @@
 <script setup lang="jsx">
 /* --------------------- 引用 --------------------- */
 import api from '@smartweighing/api'
+import dayjs from 'dayjs'
 import { ref, reactive, inject, computed } from 'vue'
 /* ----------------- 实例化和注入 ------------------ */
 const $message = inject('$message')
@@ -82,6 +83,8 @@ const mainDialog = reactive({
         mainDialog.loading = false
         if (res.success && res.data) {
             mainForm.model.clearStatus = res.data.clearStatus
+            mainForm2.model.cycle = 4
+            mainForm2.model.exeDate = dayjs().add(1, 'day').format('D')
             if (res.data.clearStatus == 1) {
                 mainForm2.model.cycle = res.data.cycle
                 mainForm2.model.exeDate = res.data.exeDate
@@ -164,7 +167,7 @@ const mainForm2 = reactive({
     },
     model: {
         cycle: 4,
-        exeDate: '1',
+        exeDate: dayjs().add(1, 'day').format('D'),
     },
     rules: {
         cycle: { required: true, message: '请选择清零周期' },
