@@ -33,32 +33,26 @@ const mainForm = reactive({
     },
     // 表单数据（参数可以不赘述，'v-model' 会自动产生值）
     model: {
-        amount: '',
-        allowanceAmount: '',
+        amount: '0',
+        allowanceAmount: '0',
     },
     rules: {
-        amount: {
-            validator: (_rule, val, callback) => {
-                if (val !== '' && !Number(val)) {
-                    return callback(new Error('充值金额不能为0'))
-                }
-                if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
-                    return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
-                }
-                callback()
-            },
-        },
-        allowanceAmount: {
-            validator: (_rule, val, callback) => {
-                if (val !== '' && !Number(val)) {
-                    return callback(new Error('充值金额不能为0'))
-                }
-                if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
-                    return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
-                }
-                callback()
-            },
-        },
+        // amount: {
+        //     validator: (_rule, val, callback) => {
+        //         if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
+        //             return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
+        //         }
+        //         callback()
+        //     },
+        // },
+        // allowanceAmount: {
+        //     validator: (_rule, val, callback) => {
+        //         if (!mainForm.model.amount && !mainForm.model.allowanceAmount) {
+        //             return callback(new Error('成员钱包、补贴钱包充值金额不能同时为空'))
+        //         }
+        //         callback()
+        //     },
+        // },
     },
     items: [
         {
@@ -115,8 +109,8 @@ const getForm = () => {
 
 const setForm = () => {
     const { form } = props
-    mainForm.model.amount = form.amount || ''
-    mainForm.model.allowanceAmount = form.allowanceAmount || ''
+    mainForm.model.amount = form.amount || '0'
+    mainForm.model.allowanceAmount = form.allowanceAmount || '0'
 }
 
 defineExpose({ validate, getForm, setForm })

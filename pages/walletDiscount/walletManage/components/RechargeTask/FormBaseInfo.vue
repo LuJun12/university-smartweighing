@@ -152,6 +152,7 @@ const mainForm = reactive({
             props: {
                 type: 'textarea',
                 rows: 2,
+                maxlength: 30,
                 style: { width: '500px' },
             },
         },
