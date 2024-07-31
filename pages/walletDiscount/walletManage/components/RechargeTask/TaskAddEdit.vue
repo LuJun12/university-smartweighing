@@ -92,8 +92,8 @@ const getProcessedParams = (form1, form2, form3) => {
         })
         params.scopeList = scopeList
     }
-    params.amount = form3.amount
-    params.allowanceAmount = form3.allowanceAmount
+    params.amount = form3.amount || '0'
+    params.allowanceAmount = form3.allowanceAmount || '0'
     return params
 }
 
