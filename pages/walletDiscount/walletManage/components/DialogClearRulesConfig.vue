@@ -82,8 +82,10 @@ const mainDialog = reactive({
         mainDialog.loading = false
         if (res.success && res.data) {
             mainForm.model.clearStatus = res.data.clearStatus
-            mainForm2.model.cycle = res.data.cycle
-            mainForm2.model.exeDate = res.data.exeDate
+            if (res.data.clearStatus == 1) {
+                mainForm2.model.cycle = res.data.cycle
+                mainForm2.model.exeDate = res.data.exeDate
+            }
         }
     },
     confirm: async () => {
@@ -127,7 +129,7 @@ const mainForm = reactive({
         },
     },
     model: {
-        clearStatus: '2',
+        clearStatus: 2,
     },
     items: [
         {
@@ -161,8 +163,8 @@ const mainForm2 = reactive({
         },
     },
     model: {
-        cycle: 2,
-        exeDate: '',
+        cycle: 4,
+        exeDate: '1',
     },
     rules: {
         cycle: { required: true, message: '请选择清零周期' },
