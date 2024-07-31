@@ -96,7 +96,7 @@ const mainDialog = reactive({
         }
         if (mainForm.model.clearStatus == 1) {
             params.cycle = mainForm2.model.cycle
-            if (mainForm2.model.cycle != 2) {
+            if ([3, 4, 5].includes(mainForm2.model.cycle)) {
                 params.exeDate = mainForm2.model.exeDate
             }
         }
@@ -161,7 +161,7 @@ const mainForm2 = reactive({
         },
     },
     model: {
-        cycle: 2,
+        cycle: 1,
         exeDate: '',
     },
     rules: {
@@ -175,6 +175,7 @@ const mainForm2 = reactive({
             type: 'render',
             render: () => {
                 const options = [
+                    { value: 1, label: '单次' },
                     { value: 2, label: '每日' },
                     { value: 3, label: '每周' },
                     { value: 4, label: '每月' },
