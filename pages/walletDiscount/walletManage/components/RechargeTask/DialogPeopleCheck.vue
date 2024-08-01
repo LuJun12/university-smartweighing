@@ -275,7 +275,7 @@ const searchConditionForm = reactive({
             labelField: 'name',
             options: computed(() => props.tagList),
             props: {
-                style: { width: '130px' },
+                style: { width: '170px' },
                 clearable: true,
                 multiple: true,
                 collapseTags: true,
