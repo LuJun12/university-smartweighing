@@ -241,7 +241,6 @@ const searchConditionForm = reactive({
             render: () => (
                 <>
                     <el-tree-select
-                        class="yq-w-130"
                         props={{ label: 'companyName' }}
                         value-key="organizationId"
                         node-key="organizationId"
@@ -264,6 +263,7 @@ const searchConditionForm = reactive({
             labelField: 'personTypeName',
             options: computed(() => personTypeList.value),
             props: {
+                style: { width: '130px' },
                 clearable: true,
             },
         },
@@ -275,7 +275,7 @@ const searchConditionForm = reactive({
             labelField: 'name',
             options: computed(() => props.tagList),
             props: {
-                style: { width: '170px' },
+                style: { width: '130px' },
                 clearable: true,
                 multiple: true,
                 collapseTags: true,
