@@ -177,7 +177,7 @@ const mainForm = reactive({
                 return (
                     <div>
                         <el-button onClick={() => memberTypeState.open()} link type="primary">
-                            添加标签
+                            添加类型
                         </el-button>
                         <br />
                         {selectedMemberList.value.map((tag, i) => {
