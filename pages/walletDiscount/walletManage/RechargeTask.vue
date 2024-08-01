@@ -22,6 +22,7 @@
 import api from '@smartweighing/api'
 import { reactive, inject, onMounted } from 'vue'
 import TaskAddEdit from './components/RechargeTask/TaskAddEdit.vue'
+import dayjs from 'dayjs';
 
 /* ----------------- 实例化和注入 ------------------ */
 const $message = inject('$message')
@@ -103,7 +104,18 @@ const mainTable = reactive({
                     { label: '每年', value: 5 },
                 ]
                 const find = options.find(op => op.value === row.cycle)
-                return find?.label || '--'
+                let exeDateStr = ''
+                if ([3, 4, 5].includes(row.cycle)) {
+                    if (row.cycle == 3) {
+                        const list = ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                        exeDateStr = list[Number(row.exeDate) - 1]
+                    } else if (row.cycle == 4) {
+                        exeDateStr = row.exeDate + '号'
+                    } else if (row.cycle == 5) {
+                        exeDateStr = dayjs(row.exeDate).format('M月D日')
+                    }
+                }
+                return (find?.label || '--') + (exeDateStr ? `,${exeDateStr}` : '')
             },
         },
         {
