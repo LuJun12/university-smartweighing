@@ -21,43 +21,13 @@
                 >
                     <template #action="{ row }">
                         <template v-if="row.status">
-                            <el-button
-                                link
-                                type="primary"
-                                @click="topUp(row)"
-                            >
-                                充值
-                            </el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                @click="extract(row)"
-                            >
-                                提现
-                            </el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                @click="changeState(row)"
-                            >
-                                调整
-                            </el-button>
-                            <el-button
-                                link
-                                type="primary"
-                                @click="showDetail(row)"
-                            >
-                                查看明细
-                            </el-button>
+                            <el-button link type="primary" @click="topUp(row)">充值</el-button>
+                            <el-button link type="primary" @click="extract(row)">提现</el-button>
+                            <el-button link type="primary" @click="changeState(row)">调整</el-button>
+                            <el-button link type="primary" @click="showDetail(row)">查看明细</el-button>
+                            <el-button link type="primary" @click="dialogPeriodConfigState.open(row)">有效期限</el-button>
                         </template>
-                        <el-button
-                            v-else
-                            link
-                            type="primary"
-                            @click="topUp(row)"
-                        >
-                            首充激活
-                        </el-button>
+                        <el-button v-else link type="primary" @click="topUp(row)">首充激活</el-button>
                     </template>
                 </ElPlusTable>
             </div>
@@ -75,39 +45,24 @@
             >
                 <template #money>
                     <div class="yq-wp-100">
-                        <el-input
-                            v-model="walletDialog.form.money"
-                            :placeholder="`请输入${walletDialog.formItems[1].label}`"
-                            clearable
-                            @input="moneyInput"
-                        >
-                            <template #suffix>
-                                元
-                            </template>
+                        <el-input v-model="walletDialog.form.money" :placeholder="`请输入${walletDialog.formItems[1].label}`" clearable @input="moneyInput">
+                            <template #suffix>元</template>
                         </el-input>
                         <div class="yq-flex yq-justify-between">
                             <span>钱包余额：{{ walletDialog.balance }}元</span>
-                            <el-button
-                                v-if="walletDialog.formType === 2"
-                                link
-                                type="primary"
-                                :disabled="walletDialog.submitting"
-                                @click="allIn"
-                            >
-                                全部提现
-                            </el-button>
+                            <el-button v-if="walletDialog.formType === 2" link type="primary" :disabled="walletDialog.submitting" @click="allIn">全部提现</el-button>
                         </div>
                     </div>
                 </template>
             </ElPlusFormDialog>
         </div>
         <template #importData>
-            <ImportData
-                v-bind="fakeRouterViewConfig.importData.props"
-                @success="mainTable.getData(1)"
-            />
+            <ImportData v-bind="fakeRouterViewConfig.importData.props" @success="mainTable.getData(1)" />
         </template>
         <DialogClearRulesConfig v-model="dialogClearRulesConfig.visible" />
+        <DialogRechargeConfig v-model="dialogRechargeConfigState.visible" />
+        <DialogExportConfig v-model="dialogExportConfigState.visible" />
+        <DialogPeriodConfig v-model="dialogPeriodConfigState.visible" :name="dialogPeriodConfigState.name"></DialogPeriodConfig>
     </FakeRouterView>
 </template>
 
@@ -119,6 +74,9 @@ import api from '@smartweighing/api'
 import FakeRouterView from '@/components/FakeRouterView.vue'
 import ImportData from './ImportData.vue'
 import DialogClearRulesConfig from './components/DialogClearRulesConfig.vue'
+import DialogRechargeConfig from './components/DialogRechargeConfig.vue'
+import DialogExportConfig from './components/DialogExportConfig.vue'
+import DialogPeriodConfig from './components/DialogPeriodConfig.vue'
 
 /* ----------------- 实例化和注入 ------------------ */
 const $api = inject('$api')
@@ -277,6 +235,34 @@ const handleContent = e => {
     if(e.parentCompanyNames) companyName = e.parentCompanyNames.join('/')
     return '所属组织:'+companyName
 }
+
+/* --------------------- 充值赠送弹框 --------------------- */
+const dialogRechargeConfigState = reactive({
+    visible:false,
+    open:() => {
+        dialogRechargeConfigState.visible = true
+    }
+})
+/* --------------------- 余额结余导出弹框 --------------------- */
+const dialogExportConfigState = reactive({
+    visible:false,
+    open:() => {
+        dialogExportConfigState.visible = true
+    }
+})
+/* --------------------- 有效期弹框 --------------------- */
+const dialogPeriodConfigState = reactive({
+    visible:false,
+    name:'',
+    open:e => {
+        console.log(e)
+        dialogPeriodConfigState.name = e.userName
+        dialogPeriodConfigState.visible = true
+    }
+})
+
+
+
 /* --------------------- 表格 --------------------- */
 const mainTable = reactive({
     // 工具栏
@@ -284,6 +270,12 @@ const mainTable = reactive({
         title: '钱包信息',
         render: scope => {
             return <>
+                <el-button type="primary" onClick={()=> {
+                    dialogRechargeConfigState.open()
+                }}>充值赠送配置</el-button>
+                <el-button type="primary" onClick={()=> {
+                    dialogExportConfigState.open()
+                }}>余额结余导出</el-button>
                 <el-button type="primary" onClick={()=> {
                     dialogClearRulesConfig.open()
                 }}>补贴清零规则配置</el-button>
@@ -412,9 +404,19 @@ const mainTable = reactive({
             minWidth: 120,
         },
         {
+            label: '赠送钱包余额（元）',
+            prop: 'allowanceAmount',
+            minWidth: 120,
+        },
+        {
+            label: '有效期限',
+            prop: 'allowanceAmount',
+            minWidth: 120,
+        },
+        {
             label: '操作',
             type: 'slot',
-            width: 250,
+            width: 300,
             fixed: 'right',
             slotName: 'action',
         },
@@ -457,6 +459,7 @@ const setDialogForm = (type, row) => {
     // 1 充值 2 提现 3 调整
     walletDialog.formType = type
     walletDialog.formItems[2].vIf = false
+    walletDialog.formItems[3].vIf = false
     walletDialog.formConfig.labelWidth = '90px'
     walletDialog.balance = row.amount
     walletDialog.form.walletId = row.id
@@ -473,7 +476,6 @@ const setDialogForm = (type, row) => {
         case 3:
             walletDialog.formItems[1].label = '调整后余额'
             walletDialog.dialogConfig.title = '钱包余额调整'
-            walletDialog.formItems[2].vIf = true
             walletDialog.formConfig.labelWidth = '110px'
             break
         default:
@@ -583,10 +585,13 @@ const walletDialog = reactive({
             ],
             events: {
                 change(v) {
+                    console.log(v,'====')
                     if (v == 1) {
+                        walletDialog.formItems[3].vIf = false
                         walletDialog.balance = walletDialog.row.amount
                     } else if (v == 2) {
                         walletDialog.balance = walletDialog.row.allowanceAmount
+                        walletDialog.formItems[3].vIf = true
                     }
                     if (walletDialog.formType == 2 && Number(walletDialog.form.money) > Number(walletDialog.balance)) {
                         walletDialog.form.money = walletDialog.balance
@@ -609,6 +614,18 @@ const walletDialog = reactive({
                 rows: 3,
                 maxlength: 30,
                 showWordLimit: true,
+            },
+        },
+        {
+            label: '备注',
+            prop: 'remark1',
+            vIf: false,
+            props: {
+                type: 'textarea',
+                rows: 3,
+                maxlength: 30,
+                showWordLimit: true,
+                placeholder:'请输入补贴渠道'
             },
         },
     ],
